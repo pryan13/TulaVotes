@@ -22,7 +22,7 @@ function mainController($scope, $http) {
         $http.post('/api/forms', $scope.formData)
             .success(function(data) {
                 $scope.formData = {}; // clear the form so our user is ready to enter another
-                //$scope.forms = data;
+                $scope.forms = data;
                 console.log(data);
             })
             .error(function(data) {
@@ -34,7 +34,7 @@ function mainController($scope, $http) {
     $scope.deleteForm = function(id) {
         $http.delete('/api/forms/' + id)
             .success(function(data) {
-                $scope.todos = data;
+                $scope.forms = data;
                 console.log(data);
             })
             .error(function(data) {
