@@ -1,10 +1,7 @@
-var express = require('express');
-var router = express.Router();
+exports.index = function(req, res){
+	res.render('index');
+};
 
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.sendfile('./views/index.html');
-  //res.render('index', { title: 'Forms' });
-});
-
-module.exports = router;
+exports.partials = function(req, res){
+	res.render('partials/' + req.params.name);
+}
