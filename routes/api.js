@@ -1,19 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/tulaVotes');
+
+var formSchema = new mongoose.Schema({
+    text:  String
+});
+var Form = mongoose.model('Form', formSchema);
 
 var forms = [];
-
-var guid = (function() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-    return function() {
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-            s4() + '-' + s4() + s4() + s4();
-    };
-})();
 
 /* GET rest api. */
 router.get('/', function(req, res) {
@@ -21,18 +16,19 @@ router.get('/', function(req, res) {
 });
 
 router.get('/forms', function(req, res) {
-    res.json(forms);
+    Form.find(function(err, forms){
+        res.json(forms);
+    });
 });
 
 router.delete('/forms/:form_id', function(req, res) {
-    var tmp = [];
-    for (var i = 0; i < forms.length; i++) {
-        if ( forms[i]._id != req.params.form_id ){
-            tmp.push(forms[i])
-        }
-    }
-    forms = tmp;
-    res.json(forms);
+    Form.findById(req.params.form_id, function (err, doc) {
+       doc.remove(function(){
+           Form.find(function(err2, forms){
+               res.json(forms);
+           });
+       });
+    });
 });
 
 router.post('/forms/:form_id', function(req, res) {
@@ -40,8 +36,13 @@ router.post('/forms/:form_id', function(req, res) {
 });
 
 router.post('/forms', function(req, res) {
-    forms.push({_id: guid(), text: req.body.text});
-    res.json(forms);
+    var item = new Form({ text: req.body.text });
+    item.save(function (err) {
+        if (err) console.log(err);
+        Form.find(function(err, forms){
+            res.json(forms);
+        });
+    });
 });
 
 module.exports = router;
