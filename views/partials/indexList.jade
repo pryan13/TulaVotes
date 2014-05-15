@@ -3,7 +3,7 @@
 .container
 	.jumbotron.text-center
 		h1 Available forms
-			span.label.label-info 3
+			span.label.label-info {{forms.length}}
 	.row
 		.col-sm-4.col-sm-offset-4
 			.checkbox(ng-repeat='form in forms')
