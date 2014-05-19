@@ -1,18 +1,17 @@
-// Created by Vitaly on 5/15/2014.
-
 .container
 	.jumbotron.text-center
-		h1 Available forms
-			span.label.label-info {{forms.length}}
+		h2 Forms you can vote
 	.row
-		.col-sm-4.col-sm-offset-4
-			.checkbox(ng-repeat='form in forms')
-				label
-					input(type='checkbox',ng-click='deleteForm(form._id)')
+		.col-sm-12
+			ul.list-group
+				li.list-group-item(ng-repeat='form in forms')
+					span.badge(ng-click=('deleteForm(form._id)'))
+						|{{form.text.length}}
 					|{{form.text}}
 	.row
 		.col-sm-8.col-sm-offset-2.text-center
 			form
-				.form-group
+				p
 					input(type='text',placeholder="Type a new form's name",ng-model="formData.text").form-control.input-lg.text-center
-				button(type='submit',ng-click="createForm()").btn.btn-primary.btn-lg Add
+					button(type='submit',ng-click="createForm()").btn.btn-primary.btn-lg.hide Add
+
