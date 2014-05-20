@@ -15,7 +15,7 @@ module.exports = function(config){
 
     frameworks: ['jasmine'],
 
-    browsers : ['Chrome'/*,'Firefox','PhantomJS'*/]
+    browsers : [/*'Chrome','Firefox',*/'PhantomJS']
 
   });
 };

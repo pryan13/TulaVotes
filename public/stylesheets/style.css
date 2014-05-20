@@ -3,6 +3,10 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-a {
-  color: #00B7FF;
+a.link-white,
+a.link-white:hover,
+a.link-white:focus,
+a.link-white:active{
+    color: #fff;
+    text-decoration: none;
 }

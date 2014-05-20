@@ -16,7 +16,7 @@ angular.module('tulaVotesControllers', [])
 
 			$scope.formData = {};
 
-			$scope.createForm = function () {
+			/*$scope.createForm = function () {
 				$http.post('/api/forms', $scope.formData)
 					.success(function (data) {
 						$scope.formData = {};
@@ -26,7 +26,7 @@ angular.module('tulaVotesControllers', [])
 					.error(function (data) {
 						console.log('Error: ' + data);
 					});
-			};
+			};*/
 
 			$scope.deleteForm = function (id) {
 				$http.delete('/api/forms/' + id)
@@ -43,5 +43,9 @@ angular.module('tulaVotesControllers', [])
 	.controller('viewFormCtrl', ['$scope', '$routeParams',
 		function ($scope, $routeParams) {
 			//get concrete form
+			$scope.formId = $routeParams.formId;
+		}])
+	.controller('editFormCtrl', ['$scope', '$routeParams', '$http',
+		function($scope, $routeParams, $http){
 			$scope.formId = $routeParams.formId;
 		}]);

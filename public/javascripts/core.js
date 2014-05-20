@@ -13,6 +13,10 @@ angular.module('tulaVotesApp', ['ngRoute', 'tulaVotesControllers'])
 				templateUrl: 'partials/viewForm',
 				controller: 'viewFormCtrl'
 			})
+			.when('/edit/:formId',{
+				templateUrl: 'partials/editForm',
+				controller: 'editFormCtrl'
+			})
 			.otherwise({
 				redirectTo: '/index'
 			})
