@@ -3,6 +3,7 @@ var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes');
@@ -18,10 +19,11 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(cookieParser('secret'));
+app.use(cookieParser());
+app.use(session({secret: 'secret'}));
 app.use(express.static(path.join(__dirname, 'public')));
 var auth = function(req, res, next) {
-	if (!req.cookies.userEmail) {
+	if (!req.session.userEmail) {
 		res.redirect('/login');
 	}
 	next();
@@ -31,16 +33,18 @@ app.get('/login', function(req, res){
 	res.render('login');
 });
 app.post('/login', function(req, res) {
-	if (req.cookies.userEmail) {
+	if (req.session.userEmail) {
 		res.redirect('/');
 	}
 	else {
-		res.cookie('userEmail', req.body.email).redirect('/');
+		req.session.userEmail = req.body.email;
+		res.redirect('/');
 	}
 });
 app.get('/logout', function(req, res){
-	if(req.cookies.userEmail){
-		res.clearCookie('userEmail').redirect('/');
+	if(req.session.userEmail){
+		req.session.destroy();
+		res.redirect('/');
 	}
 });
 app.get('/partials/:name', routes.partials);

@@ -1,28 +1,29 @@
 {
-	"name": "TulaVotes",
-	"version": "0.0.1",
-	"private": true,
-	"scripts": {
-		"prestart": "npm install",
-		"start": "node ./bin/www",
-		"postinstall": "grunt bowercopy",
-		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js"
-	},
-	"dependencies": {
-		"express": "~4.2.0",
-		"static-favicon": "~1.0.0",
-		"morgan": "~1.0.0",
-		"cookie-parser": "~1.0.1",
-		"body-parser": "~1.0.0",
-		"debug": "~0.7.4",
-		"jade": "~1.3.0",
-		"mongodb": "*",
-		"mongoose": "*",
-		"bower": "^1.3.1",
-		"grunt-cli": "^0.1.13",
-		"grunt": "^0.4.5",
-		"grunt-bowercopy": "^1.0.0",
-		"karma": "^0.12",
-		"phantomjs": "^1.9.7"
-	}
+  "name": "TulaVotes",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node ./bin/www",
+    "postinstall": "grunt bowercopy",
+    "test": "node ./node_modules/karma/bin/karma start test/karma.conf.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.0.0",
+    "bower": "^1.3.1",
+    "cookie-parser": "~1.0.1",
+    "debug": "~0.7.4",
+    "express": "~4.2.0",
+    "express-session": "^1.2.0",
+    "grunt": "^0.4.5",
+    "grunt-bowercopy": "^1.0.0",
+    "grunt-cli": "^0.1.13",
+    "jade": "~1.3.0",
+    "karma": "^0.12",
+    "mongodb": "*",
+    "mongoose": "*",
+    "morgan": "~1.0.0",
+    "phantomjs": "^1.9.7",
+    "static-favicon": "~1.0.0"
+  }
 }
