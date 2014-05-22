@@ -18,14 +18,34 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(cookieParser());
+app.use(cookieParser('secret'));
 app.use(express.static(path.join(__dirname, 'public')));
-
-//app.use('/', routes);
-app.get('/', routes.index)
+var auth = function(req, res, next) {
+	if (!req.cookies.userEmail) {
+		res.redirect('/login');
+	}
+	next();
+};
+app.get('/', auth, routes.index)
+app.get('/login', function(req, res){
+	res.render('login');
+});
+app.post('/login', function(req, res) {
+	if (req.cookies.userEmail) {
+		res.redirect('/');
+	}
+	else {
+		res.cookie('userEmail', req.body.email).redirect('/');
+	}
+});
+app.get('/logout', function(req, res){
+	if(req.cookies.userEmail){
+		res.clearCookie('userEmail').redirect('/');
+	}
+});
 app.get('/partials/:name', routes.partials);
 app.use('/api', api);
-app.get('*', routes.index);
+//app.get('*', routes.index);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,13 @@
+extends layout
+
+block bodyContent
+	.container
+		.jumbotron.text-center
+			h2 Login
+		.row
+			form(action='/login', method='post')
+				.col-sm-7.col-sm-offset-2.text-center
+					p
+						input(type='text',placeholder="Type your email to login",name="email").form-control.input-lg.text-center
+				.col-sm-1
+					button(type='submit').btn.btn-primary.btn-lg Ok

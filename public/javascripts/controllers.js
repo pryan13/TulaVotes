@@ -2,17 +2,6 @@
  * Created by Vitaly on 5/15/2014.
  */
 angular.module('tulaVotesControllers', [])
-	.controller('logInCtrl', ['$scope', '$http',
-		function($scope, $http){
-			$scope.email = '';
-			$scope.isFound = false;
-			$scope.logIn = function(){
-				$http.get('/api/users/' + $scope.email)
-					.success(function(data){
-						$scope.isFound = data.success;
-					});
-			};
-		}])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
 			//get list of forms
