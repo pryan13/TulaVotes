@@ -7,7 +7,10 @@ mongoose.connect(
 		: 'mongodb://localhost/tulaVotes');
 
 var formSchema = new mongoose.Schema({
-    text:  String
+    name:  String,
+    description:  String,
+    type: { type: String, enum: ['radio', 'checkbox'] },
+    isActive:  Boolean
 });
 
 var Form = mongoose.model('Form', formSchema);

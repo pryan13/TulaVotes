@@ -17,6 +17,10 @@ angular.module('tulaVotesApp', ['ngRoute', 'tulaVotesControllers'])
 				templateUrl: 'partials/editForm',
 				controller: 'editFormCtrl'
 			})
+			.when('/create/',{
+				templateUrl: 'partials/editForm',
+				controller: 'editFormCtrl'
+			})
 			.otherwise({
 				redirectTo: '/index'
 			})
