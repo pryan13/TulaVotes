@@ -1,7 +1,3 @@
-/**
- * Created by AAndrushkevich on 05/14/2014.
- */
-
 angular.module('tulaVotesApp', ['ngRoute', 'tulaVotesControllers'])
 	.config(['$routeProvider', function ($routeProvider) {
 		$routeProvider
