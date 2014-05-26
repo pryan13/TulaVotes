@@ -1,7 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/tulaVotes');
+mongoose.connect(
+	process.env.OPENSHIFT_MONGODB_DB_URL
+		? process.env.OPENSHIFT_MONGODB_DB_URL +'nodejs'
+		: 'mongodb://localhost/tulaVotes');
 
 var formSchema = new mongoose.Schema({
     text:  String
