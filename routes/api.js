@@ -6,9 +6,8 @@ mongoose.connect('mongodb://localhost/tulaVotes');
 var formSchema = new mongoose.Schema({
     text:  String
 });
-var Form = mongoose.model('Form', formSchema);
 
-var forms = [];
+var Form = mongoose.model('Form', formSchema);
 
 /* GET rest api. */
 router.get('/', function(req, res) {
@@ -32,7 +31,9 @@ router.delete('/forms/:form_id', function(req, res) {
 });
 
 router.post('/forms/:form_id', function(req, res) {
-    res.json(forms);
+    Form.find(function(err, forms){
+        res.json(forms);
+    });
 });
 
 router.post('/forms', function(req, res) {
