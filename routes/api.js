@@ -43,7 +43,12 @@ router.post('/forms/:form_id', function(req, res) {
 });
 
 router.post('/forms', function(req, res) {
-    var item = new Form({ text: req.body.text });
+    var item = new Form({ 
+    	name: req.body.name,
+    	description: req.body.description,
+    	type: req.body.type,
+    	isActive: req.body.isActive,
+    });
     item.save(function (err) {
         if (err) console.log(err);
         Form.find(function(err, forms){
