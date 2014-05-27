@@ -36,8 +36,25 @@ angular.module('tulaVotesControllers', [])
 		function($scope, $routeParams, $http, $location){
 			$scope.formId = $routeParams.formId;
 			
+			if ($scope.formId != ''){
+				$http.get('/api/forms/' + $scope.formId)
+				.success(function (data) {
+					$scope.formDate = data;
+					console.log(data);
+				})
+				.error(function (data) {
+					console.log('Error: ' + data);
+				});
+			}
+			
 			$scope.createForm = function () {
-				$http.post('/api/forms', $scope.formDate)
+				var params = '';
+				if ($scope.formId && $scope.formId.length > 0){
+					params = '/' + $scope.formId;
+				}
+				delete $scope.formDate._id;
+				delete $scope.formDate.__v;
+				$http.post('/api/forms' + params, $scope.formDate)
 					.success(function (data) {
 						$scope.formData = {};
 						$scope.forms = data;						
