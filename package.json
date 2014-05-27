@@ -6,7 +6,9 @@
 		"prestart": "npm install",
 		"start": "node ./bin/www",
 		"postinstall": "grunt bowercopy",
-		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js"
+		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js",
+		"preprotractor": "webdriver-manager update",
+		"protractor": "protractor test/protractor.conf.js"
 	},
 	"main": "./bin/www",
 	"dependencies": {
@@ -30,6 +32,7 @@
 		"karma-jasmine": "*",
 		"karma-phantomjs-launcher": "*",
 		"karma-chrome-launcher": "*",
-		"phantomjs": "*"
+		"phantomjs": "*",
+		"protractor": "*"
 	}
 }
