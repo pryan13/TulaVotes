@@ -1,8 +1,16 @@
 extends layout
 
 block bodyContent
-	<!-- sample text or maybe menu -->
-	div(ng-view)
+	.container
+		.row
+			.col-sm-6.text-left
+				span.badge
+					a.link-white(href='#/create') create form
+			.col-sm-6.text-right
+				span.badge
+					a.link-white(href='/logout')= userEmail
+						|  | logout
+	div(style='margin: 5px;', ng-view)
 	script(src='javascripts/lib/angular.js')
 	script(src='javascripts/lib/angular-route.js')
 	script(src='javascripts/core.js')

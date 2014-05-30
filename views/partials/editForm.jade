@@ -1,4 +1,19 @@
-// Created by Vitaly on 5/15/2014.
-
-div
-	|Hey! Edit your {{formId}} form
+.container
+	form(role='form')
+		.form-group
+			label(for='name') Name
+			input(ng-model='formDate.name', type='text', class='form-control', id="name", placeholder="Enter name")
+	
+		.form-group
+			label(for='decription') Description
+			textarea(ng-model='formDate.description', class="form-control", id="decription", rows="3")
+		.form-group
+			label(for="type") Type
+			select(ng-model='formDate.type', class="form-control", id="type")
+				option(value='') Please select...
+				option(value='radio') Radio
+				option(value='checkbox') Cehckbox
+		.checkbox
+			label Is Active
+				input(type="checkbox", ng-model='formDate.isActive')
+		button(class="btn btn-default", ng-click='createForm()') Submit
