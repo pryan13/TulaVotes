@@ -26,6 +26,7 @@
 		"karma-jasmine": "~0.2",
 		"karma-phantomjs-launcher": "~0.1",
 		"karma-chrome-launcher": "~0.1",
-		"phantomjs": "^1.9.7"
+		"phantomjs": "^1.9.7",
+        "jasmine-node": "*"
 	}
 }
