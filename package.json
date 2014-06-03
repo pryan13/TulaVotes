@@ -7,8 +7,13 @@
 		"start": "node ./bin/www",
 		"postinstall": "grunt bowercopy",
 		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js",
-		"preprotractor": "webdriver-manager update",
-		"protractor": "protractor test/protractor.conf.js"
+		"preprotractor.chrome": "webdriver-manager update",
+		"protractor.chrome": "protractor test/protractor.chrome.conf.js",
+		"preprotractor.firefox": "webdriver-manager update",
+		"protractor.firefox": "protractor test/protractor.firefox.conf.js",
+		"preprotractor.phantom": "node test/launchphantom.js",
+		"protractor.phantom": "protractor test/protractor.phantom.conf.js",
+		"launch": "node test/launchphantom.js"
 	},
 	"main": "./bin/www",
 	"dependencies": {
