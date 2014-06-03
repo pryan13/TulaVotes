@@ -11,9 +11,7 @@
 		"protractor.chrome": "protractor test/protractor.chrome.conf.js",
 		"preprotractor.firefox": "webdriver-manager update",
 		"protractor.firefox": "protractor test/protractor.firefox.conf.js",
-		"preprotractor.phantom": "node test/launchphantom.js",
-		"protractor.phantom": "protractor test/protractor.phantom.conf.js",
-		"launch": "node test/launchphantom.js"
+		"protractor.phantom": "protractor test/protractor.phantom.conf.js"
 	},
 	"main": "./bin/www",
 	"dependencies": {
