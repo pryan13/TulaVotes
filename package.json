@@ -19,7 +19,9 @@
 		"debug": "~0.7.4",
 		"jade": "~1.3.0",
 		"mongodb": "*",
-		"mongoose": "*",
+		"mongoose": "*"
+    },
+    "devDependencies": {
         "bower": "*",
         "grunt-cli": "*",
         "grunt": "*",
@@ -29,6 +31,7 @@
         "karma-phantomjs-launcher": "*",
         "karma-chrome-launcher": "*",
         "phantomjs": "*",
+        "protractor": "*",
         "jasmine-node": "*"
-	}
+    }
 }
