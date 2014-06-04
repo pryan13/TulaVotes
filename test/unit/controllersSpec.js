@@ -1,7 +1,4 @@
-/**
- * Created by Vitaly on 5/19/2014.
- */
-describe("IndexController >", function(){
+describe("indexListCtrl >", function(){
 	describe("Forms List Section >", function(){
 		var scope,controller,$httpBackend;
 		beforeEach(module("tulaVotesApp"));
@@ -24,4 +21,47 @@ describe("IndexController >", function(){
 			expect(scope.forms.length).toEqual(4);
 		});
 	});
+});
+
+describe("editFormCtrl >", function(){
+	var scope,controller,$httpBackend, routeParams;
+	beforeEach(module("tulaVotesApp"));
+//	beforeEach(inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+//		$httpBackend = _$httpBackend_;
+//		routeParams = $routeParams;
+//		scope = $rootScope.$new();
+//
+//	}));
+	afterEach(function(){
+		$httpBackend.verifyNoOutstandingExpectation();
+		$httpBackend.verifyNoOutstandingRequest();
+	});
+
+	it("should not get form details if formId is not provided", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		$httpBackend = _$httpBackend_;
+		routeParams = $routeParams;
+		scope = $rootScope.$new();
+		routeParams.formId = undefined;
+		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+		expect(scope.formId).toBeUndefined();
+	}));
+
+	it("should request form details if formId is provided", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		$httpBackend = _$httpBackend_;
+		var form = {
+			name: 'Form Name',
+			description: 'Form Description',
+			type: 'radio',
+			isActive: true
+		};
+		$httpBackend.expectGET("/api/forms/formId")
+			.respond(form);
+		routeParams = $routeParams;
+		scope = $rootScope.$new();
+		routeParams.formId = 'formId';
+		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+		expect(scope.formId).toEqual('formId');
+		$httpBackend.flush();
+		expect(scope.formDate).toEqual(form);
+	}));
 });

@@ -16,4 +16,5 @@
 		.checkbox
 			label Is Active
 				input(type="checkbox", ng-model='formDate.isActive')
-		button(class="btn btn-default", ng-click='createForm()') Submit
+		button(ng-if="isNew", class="btn btn-default", ng-click='createForm()') Create
+		button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm()') Save
