@@ -42,21 +42,29 @@ router.delete('/forms/:form_id', function (req, res) {
 	});
 });
 
-router.put('/forms/:form_id', function (req, res) {
-	Form.findById(req.params.form_id, function (err, doc) {
+var onFormSaved = function(res, err, form){
+	if(!err){
+		res.json({sucess: true, data: form});
+	}
+	else{
+		console.log(err);
+		res.statusCode = 500;
+		res.send({ error: 'Server error' });
+	}
+};
+//update form
+router.put('/forms/:formId', function (req, res) {
+	Form.findById(req.params.formId, function (err, doc) {
 		doc.name = req.body.name;
 		doc.description = req.body.description;
 		doc.type = req.body.type;
 		doc.isActive = req.body.isActive;
-		doc.save(function (err) {
-			if (err) console.log(err);
-			Form.find(function (err, forms) {
-				res.json(forms);
-			});
+		doc.save(function (err, form) {
+			onFormSaved(res, err, form);
 		});
 	});
 });
-
+//create form
 router.post('/forms', function (req, res) {
 	var item = new Form({
 		name: req.body.name,
@@ -64,11 +72,8 @@ router.post('/forms', function (req, res) {
 		type: req.body.type,
 		isActive: req.body.isActive
 	});
-	item.save(function (err) {
-		if (err) console.log(err);
-		Form.find(function (err, forms) {
-			res.json(forms);
-		});
+	item.save(function (err, form) {
+		onFormSaved(res, err, form);
 	});
 });
 

@@ -47,13 +47,15 @@ describe("editFormCtrl >", function(){
 	}));
 
 	it("should request form details if formId is provided", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
-		$httpBackend = _$httpBackend_;
 		var form = {
+			_id: '538f2a679c8bfa0000ded5ec',
+			__v: '0',
 			name: 'Form Name',
 			description: 'Form Description',
 			type: 'radio',
 			isActive: true
 		};
+		$httpBackend = _$httpBackend_;
 		$httpBackend.expectGET("/api/forms/formId")
 			.respond(form);
 		routeParams = $routeParams;
