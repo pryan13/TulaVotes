@@ -26,12 +26,6 @@ describe("indexListCtrl >", function(){
 describe("editFormCtrl >", function(){
 	var scope,controller,$httpBackend, routeParams;
 	beforeEach(module("tulaVotesApp"));
-//	beforeEach(inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
-//		$httpBackend = _$httpBackend_;
-//		routeParams = $routeParams;
-//		scope = $rootScope.$new();
-//
-//	}));
 	afterEach(function(){
 		$httpBackend.verifyNoOutstandingExpectation();
 		$httpBackend.verifyNoOutstandingRequest();
@@ -41,14 +35,14 @@ describe("editFormCtrl >", function(){
 		$httpBackend = _$httpBackend_;
 		routeParams = $routeParams;
 		scope = $rootScope.$new();
-		routeParams.formId = undefined;
 		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
 		expect(scope.formId).toBeUndefined();
 	}));
 
 	it("should request form details if formId is provided", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
-		var form = {
-			_id: '538f2a679c8bfa0000ded5ec',
+		var id = '538f2a679c8bfa0000ded5ec',
+			form = {
+			_id: id,
 			__v: '0',
 			name: 'Form Name',
 			description: 'Form Description',
@@ -56,13 +50,13 @@ describe("editFormCtrl >", function(){
 			isActive: true
 		};
 		$httpBackend = _$httpBackend_;
-		$httpBackend.expectGET("/api/forms/formId")
+		$httpBackend.expectGET("/api/forms/" + id)
 			.respond(form);
 		routeParams = $routeParams;
 		scope = $rootScope.$new();
-		routeParams.formId = 'formId';
+		routeParams.formId = id;
 		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
-		expect(scope.formId).toEqual('formId');
+		expect(scope.formId).toEqual(id);
 		$httpBackend.flush();
 		expect(scope.formDate).toEqual(form);
 	}));

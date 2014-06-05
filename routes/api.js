@@ -44,7 +44,7 @@ router.delete('/forms/:form_id', function (req, res) {
 
 var onFormSaved = function(res, err, form){
 	if(!err){
-		res.json({sucess: true, data: form});
+		res.json({success: true, data: form});
 	}
 	else{
 		console.log(err);
