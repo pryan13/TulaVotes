@@ -3,26 +3,22 @@ angular.module('tulaVotesControllers', [])
 		function ($scope, $http) {
 			//get list of forms
 			$http.get('/api/forms')
-				.success(function (data) {
-					$scope.forms = data;
-					console.log(data);
+				.success(function (response) {
+					$scope.forms = response.data;
 				})
-				.error(function (data) {
-					console.log('Error: ' + data);
+				.error(function (response) {
+					console.log('Error: ' + response);
 				});
 
 			$scope.formData = {};
 
-			
-
 			$scope.deleteForm = function (id) {
 				$http.delete('/api/forms/' + id)
-					.success(function (data) {
-						$scope.forms = data;
-						console.log(data);
+					.success(function (response) {
+						$scope.forms = response.data;
 					})
-					.error(function (data) {
-						console.log('Error: ' + data);
+					.error(function (response) {
+						console.log('Error: ' + response);
 					});
 			};
 		}
@@ -39,12 +35,11 @@ angular.module('tulaVotesControllers', [])
 			
 			if ($scope.formId !== undefined){
 				$http.get('/api/forms/' + $scope.formId)
-				.success(function (data) {
-					$scope.formDate = data;
-					console.log(data);
+				.success(function (response) {
+					$scope.formDate = response.data;
 				})
-				.error(function (data) {
-					console.log('Error: ' + data);
+				.error(function (response) {
+					console.log('Error: ' + response);
 				});
 			}
 			
@@ -53,8 +48,8 @@ angular.module('tulaVotesControllers', [])
 					.success(function () {
 						$location.url('/index');
 					})
-					.error(function (data) {
-						console.log('Error: ' + data);
+					.error(function (response) {
+						console.log('Error: ' + response);
 					});
 			};
 
@@ -63,8 +58,8 @@ angular.module('tulaVotesControllers', [])
 					.success(function () {
 						$location.url('/index');
 					})
-					.error(function (data) {
-						console.log('Error: ' + data);
+					.error(function (response) {
+						console.log('Error: ' + response);
 					});
 			};
 		}]);

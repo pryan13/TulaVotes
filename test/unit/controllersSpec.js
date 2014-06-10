@@ -14,7 +14,7 @@ describe("indexListCtrl >", function(){
 
 		it("should fetch list of forms with 4 items", function(){
 			$httpBackend.expectGET("/api/forms")
-				.respond([{text: 'sample form 0'},{text: 'sample form 1'},{text: 'sample form 2'},{text: 'sample form 3'}])
+				.respond({success: true, data: [{text: 'sample form 0'},{text: 'sample form 1'},{text: 'sample form 2'},{text: 'sample form 3'}]})
 			expect(scope.forms).toBeUndefined();
 			$httpBackend.flush();
 			expect(scope.forms).not.toBeUndefined();
@@ -51,7 +51,7 @@ describe("editFormCtrl >", function(){
 		};
 		$httpBackend = _$httpBackend_;
 		$httpBackend.expectGET("/api/forms/" + id)
-			.respond(form);
+			.respond({success: true, data: form});
 		routeParams = $routeParams;
 		scope = $rootScope.$new();
 		routeParams.formId = id;

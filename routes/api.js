@@ -1,50 +1,20 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-mongoose.connect(
-	process.env.OPENSHIFT_MONGODB_DB_URL
-		? process.env.OPENSHIFT_MONGODB_DB_URL + 'nodejs'
-		: 'mongodb://localhost/tulaVotes');
+var dal = require('../db/dal');
 
-var formSchema = new mongoose.Schema({
-	name: String,
-	description: String,
-	type: { type: String, enum: ['radio', 'checkbox'] },
-	isActive: Boolean
-});
-
-var Form = mongoose.model('Form', formSchema);
-
-/* GET rest api. */
-router.get('/', function (req, res) {
-	res.send('test');
-});
-
-router.get('/forms', function (req, res) {
-	Form.find(function (err, forms) {
-		res.json(forms);
+var getFormList = function(res){
+	dal.getList(function(err, forms){
+		onRequestComplete(res, err, forms);
 	});
-});
+};
 
-router.get('/forms/:form_id', function (req, res) {
-	Form.findById(req.params.form_id, function (err, doc) {
-		res.json(doc);
-	});
-});
-
-router.delete('/forms/:form_id', function (req, res) {
-	Form.findById(req.params.form_id, function (err, doc) {
-		doc.remove(function () {
-			Form.find(function (err2, forms) {
-				res.json(forms);
-			});
-		});
-	});
-});
-
-var onFormSaved = function(res, err, form){
+var onRequestComplete = function(res, err, data, onSuccessCallback){
 	if(!err){
-		res.json({success: true, data: form});
+		if(onSuccessCallback){
+			onSuccessCallback();
+			return;
+		}
+		res.json({success: true, data: data});
 	}
 	else{
 		console.log(err);
@@ -52,29 +22,40 @@ var onFormSaved = function(res, err, form){
 		res.send({ error: 'Server error' });
 	}
 };
-//update form
-router.put('/forms/:formId', function (req, res) {
-	Form.findById(req.params.formId, function (err, doc) {
-		doc.name = req.body.name;
-		doc.description = req.body.description;
-		doc.type = req.body.type;
-		doc.isActive = req.body.isActive;
-		doc.save(function (err, form) {
-			onFormSaved(res, err, form);
-		});
+
+//get list
+router.get('/forms', function (req, res) {
+	getFormList(res);
+});
+
+//get details
+router.get('/forms/:formId', function (req, res) {
+	dal.getForm(req.params.formId, function(err, form){
+		onRequestComplete(res, err, form);
 	});
 });
+
 //create form
 router.post('/forms', function (req, res) {
-	var item = new Form({
-		name: req.body.name,
-		description: req.body.description,
-		type: req.body.type,
-		isActive: req.body.isActive
+	dal.createForm(req.body, function(err, form){
+		onRequestComplete(res, err, form);
+	})
+});
+
+//update form
+router.put('/forms/:formId', function (req, res) {
+	dal.updateForm(req.body, function (err, form) {
+		onRequestComplete(res, err, form);
 	});
-	item.save(function (err, form) {
-		onFormSaved(res, err, form);
-	});
+});
+
+//delete form
+router.delete('/forms/:formId', function (req, res) {
+	dal.deleteForm(req.params.formId, function (err) {
+		onRequestComplete(res, err, null, function () {
+			getFormList();
+		});
+	})
 });
 
 module.exports = router;
