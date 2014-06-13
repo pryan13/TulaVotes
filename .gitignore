@@ -1,6 +1,7 @@
 .idea/
 /node_modules
 /bower_components
+/public/javascripts/lib
 .jshintrc
 .npmignore
 .project

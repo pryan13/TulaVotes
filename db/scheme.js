@@ -1,8 +1,6 @@
 var mongoose = require('mongoose');
-mongoose.connect(
-	process.env.OPENSHIFT_MONGODB_DB_URL
-		? process.env.OPENSHIFT_MONGODB_DB_URL + 'nodejs'
-		: 'mongodb://localhost/tulaVotes');
+var config = require('../config/wrapper');
+mongoose.connect(config.get('db:uri'));
 
 var formSchema = new mongoose.Schema({
 	name: String,

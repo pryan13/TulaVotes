@@ -4,34 +4,35 @@
 	"private": true,
 	"scripts": {
 		"prestart": "npm install",
-		"start": "node ./bin/www",
+		"start": "node ./bin/www --configuration development",
 		"postinstall": "grunt bowercopy",
 		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js"
 	},
 	"main": "./bin/www",
 	"dependencies": {
+		"body-parser": "~1.0.0",
+		"cookie-parser": "~1.0.1",
+		"debug": "~0.7.4",
 		"express": "~4.2.0",
 		"express-session": "~1.2.0",
-		"static-favicon": "~1.0.0",
-		"morgan": "~1.0.0",
-		"cookie-parser": "~1.0.1",
-		"body-parser": "~1.0.0",
-		"debug": "~0.7.4",
 		"jade": "~1.3.0",
 		"mongodb": "*",
-		"mongoose": "*"
-    },
-    "devDependencies": {
-        "bower": "*",
-        "grunt-cli": "*",
-        "grunt": "*",
-        "grunt-bowercopy": "*",
-        "karma": "*",
-        "karma-jasmine": "*",
-        "karma-phantomjs-launcher": "*",
-        "karma-chrome-launcher": "*",
-        "phantomjs": "*",
-        "protractor": "*",
-        "jasmine-node": "*"
-    }
+		"mongoose": "*",
+		"morgan": "~1.0.0",
+		"nconf": "~0.6.9",
+		"static-favicon": "~1.0.0"
+	},
+	"devDependencies": {
+		"bower": "*",
+		"grunt-cli": "*",
+		"grunt": "*",
+		"grunt-bowercopy": "*",
+		"karma": "*",
+		"karma-jasmine": "*",
+		"karma-phantomjs-launcher": "*",
+		"karma-chrome-launcher": "*",
+		"phantomjs": "*",
+		"protractor": "*",
+		"jasmine-node": "*"
+	}
 }
