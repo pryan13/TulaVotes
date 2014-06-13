@@ -1,5 +1,5 @@
 {
 	"db": {
-		"uri": process.env.OPENSHIFT_MONGODB_DB_URL
+		"uri": process.env.OPENSHIFT_MONGODB_DB_URL + 'nodejs'
 	}
 }
