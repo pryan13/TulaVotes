@@ -7,7 +7,7 @@
 		"start": "node ./bin/www  --configuration staging",
 		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js"
 	},
-	"main": "./bin/www",
+	"main": "./bin/www  --configuration staging",
 	"dependencies": {
 		"body-parser": "~1.0.0",
 		"cookie-parser": "~1.0.1",
