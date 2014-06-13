@@ -12,8 +12,9 @@
 			select(ng-model='formDate.type', class="form-control", id="type")
 				option(value='') Please select...
 				option(value='radio') Radio
-				option(value='checkbox') Cehckbox
+				option(value='checkbox') Checkbox
 		.checkbox
 			label Is Active
 				input(type="checkbox", ng-model='formDate.isActive')
-		button(class="btn btn-default", ng-click='createForm()') Submit
+		button(ng-if="isNew", class="btn btn-default", ng-click='createForm()') Create
+		button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm()') Save

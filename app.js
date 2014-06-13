@@ -28,7 +28,7 @@ var auth = function(req, res, next) {
 	}
 	next();
 };
-app.get('/', auth, routes.index)
+app.get('/', auth, routes.index);
 app.get('/login', function(req, res){
 	res.render('login');
 });

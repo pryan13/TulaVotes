@@ -3,26 +3,22 @@ angular.module('tulaVotesControllers', [])
 		function ($scope, $http) {
 			//get list of forms
 			$http.get('/api/forms')
-				.success(function (data) {
-					$scope.forms = data;
-					console.log(data);
+				.success(function (response) {
+					$scope.forms = response.data;
 				})
-				.error(function (data) {
-					console.log('Error: ' + data);
+				.error(function (response) {
+					console.log('Error: ' + response);
 				});
 
 			$scope.formData = {};
 
-			
-
 			$scope.deleteForm = function (id) {
 				$http.delete('/api/forms/' + id)
-					.success(function (data) {
-						$scope.forms = data;
-						console.log(data);
+					.success(function (response) {
+						$scope.forms = response.data;
 					})
-					.error(function (data) {
-						console.log('Error: ' + data);
+					.error(function (response) {
+						console.log('Error: ' + response);
 					});
 			};
 		}
@@ -35,33 +31,35 @@ angular.module('tulaVotesControllers', [])
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location',
 		function($scope, $routeParams, $http, $location){
 			$scope.formId = $routeParams.formId;
+			$scope.isNew = $scope.formId === undefined;
 			
-			if ($scope.formId != ''){
+			if ($scope.formId !== undefined){
 				$http.get('/api/forms/' + $scope.formId)
-				.success(function (data) {
-					$scope.formDate = data;
-					console.log(data);
+				.success(function (response) {
+					$scope.formDate = response.data;
 				})
-				.error(function (data) {
-					console.log('Error: ' + data);
+				.error(function (response) {
+					console.log('Error: ' + response);
 				});
 			}
 			
 			$scope.createForm = function () {
-				var params = '';
-				if ($scope.formId && $scope.formId.length > 0){
-					params = '/' + $scope.formId;
-				}
-				delete $scope.formDate._id;
-				delete $scope.formDate.__v;
-				$http.post('/api/forms' + params, $scope.formDate)
-					.success(function (data) {
-						$scope.formData = {};
-						$scope.forms = data;						
+				$http.post('/api/forms', $scope.formDate)
+					.success(function () {
 						$location.url('/index');
 					})
-					.error(function (data) {
-						console.log('Error: ' + data);
+					.error(function (response) {
+						console.log('Error: ' + response);
+					});
+			};
+
+			$scope.updateForm = function () {
+				$http.put('/api/forms/' + $scope.formId, $scope.formDate)
+					.success(function () {
+						$location.url('/index');
+					})
+					.error(function (response) {
+						console.log('Error: ' + response);
 					});
 			};
 		}]);
