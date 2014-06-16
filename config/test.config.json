@@ -1,5 +1,6 @@
 {
 	"db": {
-		"uri": "mongodb://localhost/tulaVotes_test"
+		"uri": "mongodb://localhost/",
+		"name": "tulaVotes_test"
 	}
 }
