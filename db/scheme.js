@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var config = require('../config/wrapper');
-mongoose.connect(config.get('db:uri') + config.get('db:name'));
+mongoose.connect(config.db.uri + config.db.name);
 
 var formSchema = new mongoose.Schema({
 	name: String,
