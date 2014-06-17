@@ -1,40 +1,45 @@
 {
-  "name": "TulaVotes",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "prestart": "npm install",
-    "start": "node ./bin/www --configuration development",
-    "postinstall": "grunt bowercopy",
-    "test-frontend": "node ./node_modules/karma/bin/karma start test/frontend/karma.conf.js",
-    "test-backend": "node ./node_modules/jasmine-node/bin/jasmine-node test/backend/ --verbose"
-  },
-  "main": "./bin/www",
-  "dependencies": {
-    "body-parser": "~1.0.0",
-    "cookie-parser": "~1.0.1",
-    "debug": "~0.7.4",
-    "express": "~4.2.0",
-    "express-session": "~1.2.0",
-    "jade": "~1.3.0",
-    "mongodb": "*",
-    "mongoose": "*",
-    "morgan": "~1.0.0",
-    "nconf": "~0.6.9",
-    "static-favicon": "~1.0.0"
-  },
-  "devDependencies": {
-    "bower": "*",
-    "grunt": "*",
-    "grunt-bowercopy": "*",
-    "grunt-cli": "*",
-    "jasmine-node": "*",
-    "karma": "*",
-    "karma-chrome-launcher": "*",
-    "karma-jasmine": "*",
-    "karma-phantomjs-launcher": "*",
-    "karma-story-reporter": "*",
-    "phantomjs": "*",
-    "protractor": "*"
-  }
+	"name": "TulaVotes",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"prestart": "npm install",
+		"start": "node ./bin/www --configuration development",
+		"postinstall": "grunt bowercopy",
+		"test-frontend": "node ./node_modules/karma/bin/karma start test/frontend/karma.conf.js",
+		"test-backend": "node ./node_modules/jasmine-node/bin/jasmine-node test/backend/ --verbose",
+		"preprotractor.chrome": "webdriver-manager update",
+		"protractor.chrome": "protractor test/e2e/config/protractor.chrome.conf.js",
+		"preprotractor.firefox": "webdriver-manager update",
+		"protractor.firefox": "protractor test/e2e/config/protractor.firefox.conf.js",
+		"protractor.phantom": "protractor test/e2e/config/protractor.phantom.conf.js"
+	},
+	"main": "./bin/www",
+	"dependencies": {
+		"body-parser": "~1.0.0",
+		"cookie-parser": "~1.0.1",
+		"debug": "~0.7.4",
+		"express": "~4.2.0",
+		"express-session": "~1.2.0",
+		"jade": "~1.3.0",
+		"mongodb": "*",
+		"mongoose": "*",
+		"morgan": "~1.0.0",
+		"nconf": "~0.6.9",
+		"static-favicon": "~1.0.0"
+	},
+	"devDependencies": {
+		"bower": "*",
+		"grunt": "*",
+		"grunt-bowercopy": "*",
+		"grunt-cli": "*",
+		"jasmine-node": "*",
+		"karma": "*",
+		"karma-chrome-launcher": "*",
+		"karma-jasmine": "*",
+		"karma-phantomjs-launcher": "*",
+		"karma-story-reporter": "*",
+		"phantomjs": "*",
+		"protractor": "*"
+	}
 }
