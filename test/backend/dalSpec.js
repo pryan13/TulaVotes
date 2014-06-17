@@ -1,3 +1,4 @@
+//all mongo things
 var Db = require('mongodb').Db,
 	MongoClient = require('mongodb').MongoClient,
 	Server = require('mongodb').Server,
