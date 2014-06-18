@@ -1,14 +1,14 @@
-var mongoose = require('mongoose');
-var config = require('../config/wrapper');
-mongoose.connect(config.db.uri + config.db.name);
+module.exports = function(config) {
+	var mongoose = require('mongoose');
 
-var formSchema = new mongoose.Schema({
-	name: String,
-	description: String,
-	type: { type: String, enum: ['radio', 'checkbox'] },
-	isActive: Boolean
-});
+	mongoose.connect(config.db().uri);
 
-var Form = mongoose.model('Form', formSchema);
+	var formSchema = new mongoose.Schema({
+		name: String,
+		description: String,
+		type: { type: String, enum: ['radio', 'checkbox'] },
+		isActive: Boolean
+	});
 
-module.exports = Form;
+	return mongoose.model('Form', formSchema);
+};

@@ -1,6 +1,10 @@
 var nconf = require('nconf');
 
 nconf.argv();
-var appConfig = nconf.get('configuration');
+var runtimeAppConfig = nconf.get('configuration');
 
-module.exports = require('../config/' + appConfig + '.config.js');
+module.exports = function(configuration){
+	var settings = require('../config/settings'),
+		appConfiguration = configuration || runtimeAppConfig;
+	return settings[appConfiguration || 'development'] || settings['development'];
+};

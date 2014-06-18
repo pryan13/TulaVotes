@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var dal = require('../db/dal');
+var config = require('../config/wrapper')();
+var dal = require('../db/dal')(config);
 
 var getFormList = function(res){
 	dal.getList(function(err, forms){
