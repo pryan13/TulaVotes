@@ -15,11 +15,11 @@ var dal = require('../../db/dal')(config);
 
 
 
-describe("DAL > ", function() {
-	describe("forms management > ", function () {
+describe("DAL", function() {
+	describe("forms management", function () {
 		var mdb = new Db(config.db().name, new Server(config.db().host, 27017));
 
-		describe("getList method > ", function () {
+		describe("getList method", function () {
 			it("should return empty list if 'forms' collection is empty or doesn't exist", function (done) {
 				var checkMethod = function () {
 					dal.getList(function (err, forms) {
@@ -89,7 +89,7 @@ describe("DAL > ", function() {
 			});
 		});
 
-		describe("getForm method > ", function () {
+		describe("getForm method", function () {
 			it("should return null if 'forms' collection is empty or doesn't exist", function (done) {
 				mdb.open(function (err, db) {
 					db.dropCollection("forms", function (err, result) {
@@ -127,7 +127,6 @@ describe("DAL > ", function() {
 									mdb.close();
 									done();
 								});
-
 							});
 						});
 					});
@@ -135,5 +134,97 @@ describe("DAL > ", function() {
 			});
 		});
 
+		describe("createForm method", function(){
+			it("should create and persist new form", function (done) {
+				var form = {
+					name: "new form",
+					description: "new form desc",
+					type: 'radio',
+					isActive: true
+				};
+				mdb.open(function (err, db) {
+					db.dropCollection("forms", function (err, result) {
+						db.createCollection("forms", function (err, collection) {
+							dal.createForm(form, function(err, createdForm){
+								collection.findOne({name: createdForm.name}, function(err, formFound){
+									expect(err).toBeNull();
+									expect(createdForm._id.toHexString()).toEqual(formFound._id.toHexString());
+									expect(createdForm.description).toEqual(formFound.description);
+									expect(createdForm.type).toEqual(formFound.type);
+									expect(createdForm.isActive).toEqual(formFound.isActive);
+									mdb.close();
+									done();
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		describe("updateForm method", function(){
+			it("should update and persist existing form", function (done) {
+				var form = {
+						name: "new form",
+						description: "new form desc",
+						type: 'radio',
+						isActive: true
+					},
+					updated = {
+						name: "updated form",
+						description: "updated form desc",
+						type: 'checkbox',
+						isActive: false
+					};
+				mdb.open(function (err, db) {
+					db.dropCollection("forms", function (err, result) {
+						db.createCollection("forms", function (err, collection) {
+							collection.insert(form, function(err, result){
+								collection.findOne({name: "new form"}, function(err, formFound){
+									updated.formId = formFound._id.toHexString();
+									dal.updateForm(updated, function(err, updatedForm){
+										expect(err).toBeNull();
+										expect(updatedForm._id.toHexString()).toEqual(updated.formId);
+										expect(updatedForm.description).toEqual(updated.description);
+										expect(updatedForm.type).toEqual(updated.type);
+										expect(updatedForm.isActive).toEqual(updated.isActive);
+										mdb.close();
+										done();
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
+
+		describe("deleteForm method", function(){
+			it("should delete existing form", function (done) {
+				var form = {
+						name: "new form",
+						description: "new form desc",
+						type: 'radio',
+						isActive: true
+					};
+				mdb.open(function (err, db) {
+					db.dropCollection("forms", function (err, result) {
+						db.createCollection("forms", function (err, collection) {
+							collection.insert(form, function(err, result){
+								dal.deleteForm(form._id.toHexString(), function(err){
+									expect(err).toBeNull();
+									collection.findOne({name: "new form"}, function(err, formFoundAfterDelete){
+										expect(err).toBeNull();
+										expect(formFoundAfterDelete).toBeNull();
+										mdb.close();
+										done();
+									});
+								});
+							});
+						});
+					});
+				});
+			});
+		});
 	});
 });
