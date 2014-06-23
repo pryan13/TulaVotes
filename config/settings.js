@@ -9,7 +9,10 @@ module.exports = {
 				host: host,
 				uri: "mongodb://" + host + "/" + name
 			};
-		}
+		},
+		allowedUsers: [
+			"user"
+		]
 	},
 	test: {
 		db: function() {
@@ -21,7 +24,10 @@ module.exports = {
 				host: host,
 				uri: "mongodb://" + host + "/" + name
 			};
-		}
+		},
+		allowedUsers: [
+			"testuser"
+		]
 	},
 	staging: {
 		db : function() {
@@ -30,6 +36,11 @@ module.exports = {
 			return {
 				uri: process.env.OPENSHIFT_MONGODB_DB_URL + name
 			};
-		}
+		},
+		allowedUsers: [
+			"vdanilov@tula.co",
+			"aandrushkevich@tula.co",
+			"master"
+		]
 	}
 };
