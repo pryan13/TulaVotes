@@ -11,7 +11,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
-			"user"
+			"master"
 		]
 	},
 	test: {
@@ -26,7 +26,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
-			"testuser"
+			"master"
 		]
 	},
 	staging: {

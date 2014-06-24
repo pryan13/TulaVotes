@@ -1,6 +1,6 @@
 exports.config = {
 	// Start a Selenium Standalone sever - only run this using chrome.
-	seleniumServerJar: '../../../node_modules/protractor/selenium/selenium-server-standalone-2.42.0.jar',
+	//seleniumServerJar: '../../../node_modules/protractor/selenium/selenium-server-standalone-2.42.0.jar',
 	seleniumPort: 4444,
 	seleniumArgs: ['-browserTimeout=60'],
 

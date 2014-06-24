@@ -51,7 +51,7 @@ describe('Login page >', function(){
 	}
 
 
-	it('should be represented instead of index if not authorized', function(){
+	it('should redirect to login page instead of index if not authorized', function(){
 		for(var i = 0; i < index.url.length; i++){
 			browser.driver.get(index.url[i]);
 			expect(browser.driver.getCurrentUrl()).toMatch(login.url[0]);
@@ -59,9 +59,17 @@ describe('Login page >', function(){
 		}
 	});
 
-	it('should redirect user to the index page after submit email', function(){
+	it('should deny authentication for unallowed users and redirect to login page after submit email', function(){
 		browser.driver.get(index.url[0]);
 		element(by.name('email')).sendKeys('test@mail.com');
+		element(by.buttonText('OK')).click();
+		expect(browser.driver.getCurrentUrl()).toEqual(login.url[0]);
+		expect(browser.driver.getTitle()).toEqual(login.title);
+	});
+
+	it('should redirect user to the index page after submit email if user allowed', function(){
+		browser.driver.get(index.url[0]);
+		element(by.name('email')).sendKeys('master');
 		element(by.buttonText('OK')).click();
 		expect(browser.driver.getCurrentUrl()).toEqual(index.url[1]);
 		expect(browser.driver.getTitle()).toEqual(index.title);
