@@ -54,7 +54,7 @@ router.put('/forms', function (req, res) {
 router.delete('/forms/:formId', function (req, res) {
 	dal.deleteForm(req.params.formId, function (err) {
 		onRequestComplete(res, err, null, function () {
-			getFormList();
+			getFormList(res);
 		});
 	})
 });

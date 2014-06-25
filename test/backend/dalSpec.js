@@ -181,10 +181,10 @@ describe("DAL", function() {
 						db.createCollection("forms", function (err, collection) {
 							collection.insert(form, function(err, result){
 								collection.findOne({name: "new form"}, function(err, formFound){
-									updated.formId = formFound._id.toHexString();
+									updated._id = formFound._id.toHexString();
 									dal.updateForm(updated, function(err, updatedForm){
 										expect(err).toBeNull();
-										expect(updatedForm._id.toHexString()).toEqual(updated.formId);
+										expect(updatedForm._id.toHexString()).toEqual(updated._id);
 										expect(updatedForm.description).toEqual(updated.description);
 										expect(updatedForm.type).toEqual(updated.type);
 										expect(updatedForm.isActive).toEqual(updated.isActive);
