@@ -36,19 +36,19 @@ describe("editFormCtrl >", function(){
 		routeParams = $routeParams;
 		scope = $rootScope.$new();
 		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
-		expect(scope.formId).toBeUndefined();
+		expect(scope.isNew).toBeTruthy();
 	}));
 
 	it("should request form details if formId is provided", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
 		var id = '538f2a679c8bfa0000ded5ec',
 			form = {
-			_id: id,
-			__v: '0',
-			name: 'Form Name',
-			description: 'Form Description',
-			type: 'radio',
-			isActive: true
-		};
+				_id: id,
+				__v: '0',
+				name: 'Form Name',
+				description: 'Form Description',
+				type: 'radio',
+				isActive: true
+			};
 		$httpBackend = _$httpBackend_;
 		$httpBackend.expectGET("/api/forms/" + id)
 			.respond({success: true, data: form});
@@ -56,8 +56,67 @@ describe("editFormCtrl >", function(){
 		scope = $rootScope.$new();
 		routeParams.formId = id;
 		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
-		expect(scope.formId).toEqual(id);
+		expect(scope.isNew).toBeFalsy();
 		$httpBackend.flush();
-		expect(scope.formDate).toEqual(form);
+		expect(scope.formData).toEqual(form);
+	}));
+
+	it("should save new form", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		var form = {
+				__v: '0',
+				name: 'Form Name',
+				description: 'Form Description',
+				type: 'radio',
+				isActive: true
+			},
+			savedForm = form;
+		savedForm._id = '538f2a679c8bfa0000ded5ec';
+		$httpBackend = _$httpBackend_;
+		$httpBackend.expectPOST("/api/forms")
+			.respond({success: true, data: savedForm});
+		scope = $rootScope.$new();
+		controller = $controller("editFormCtrl", {$scope: scope});
+
+		expect(scope.formData).toBeUndefined();
+		scope.createForm(form);
+		$httpBackend.flush();
+		expect(scope.formData).toEqual(savedForm);
+	}));
+
+	it("should update existing form", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		var id='538f2a679c8bfa0000ded5ec',
+			existingForm = {
+				_id: id,
+				__v: '0',
+				name: 'Form Name',
+				description: 'Form Description',
+				type: 'radio',
+				isActive: true
+			},
+			updatedForm = {
+				_id: id,
+				__v: '0',
+				name: 'Updated Form Name',
+				description: 'Updated Form Description',
+				type: 'checkbox',
+				isActive: true
+			};
+		$httpBackend = _$httpBackend_;
+		$httpBackend.expectGET("/api/forms/" + id)
+			.respond({success: true, data: existingForm});
+		scope = $rootScope.$new();
+		routeParams.formId = id;
+		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+
+		$httpBackend.flush();
+		expect(scope.formData).toEqual(existingForm);
+
+		$httpBackend.expectPUT("/api/forms")
+			.respond({success: true, data: updatedForm});
+		scope.updateForm(updatedForm);
+		$httpBackend.flush();
+		expect(scope.formData).toEqual(updatedForm);
 	}));
 });
+
+describe("viewFormCtrl >", function(){});

@@ -44,7 +44,7 @@ router.post('/forms', function (req, res) {
 });
 
 //update form
-router.put('/forms/:formId', function (req, res) {
+router.put('/forms', function (req, res) {
 	dal.updateForm(req.body, function (err, form) {
 		onRequestComplete(res, err, form);
 	});

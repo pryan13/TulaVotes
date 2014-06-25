@@ -28,7 +28,7 @@ module.exports = function(config) {
 	};
 
 	var updateForm = function (data, onComplete) {
-		formDbObject.findById(data.formId, function (err, form) {
+		formDbObject.findById(data._id, function (err, form) {
 			form.name = data.name;
 			form.description = data.description;
 			form.type = data.type;

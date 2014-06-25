@@ -23,40 +23,41 @@ angular.module('tulaVotesControllers', [])
 			};
 		}
 	])
-	.controller('viewFormCtrl', ['$scope', '$routeParams',
-		function ($scope, $routeParams) {
-			//get concrete form
-			$scope.formId = $routeParams.formId;
+	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http',
+		function ($scope, $routeParams, $http) {
 		}])
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location',
 		function($scope, $routeParams, $http, $location){
-			$scope.formId = $routeParams.formId;
-			$scope.isNew = $scope.formId === undefined;
+			$scope.isNew = $routeParams.formId === undefined;
 			
-			if ($scope.formId !== undefined){
-				$http.get('/api/forms/' + $scope.formId)
+			if (!$scope.isNew){
+				$http.get('/api/forms/' + $routeParams.formId)
 				.success(function (response) {
-					$scope.formDate = response.data;
+					$scope.formData = response.data;
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
 				});
 			}
 			
-			$scope.createForm = function () {
-				$http.post('/api/forms', $scope.formDate)
-					.success(function () {
-						$location.url('/index');
+			$scope.createForm = function (newForm) {
+				$http.post('/api/forms', newForm)
+					.success(function (response) {
+						if(response.success)
+							$scope.formData = response.data;
+						//$location.url('/index');
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
 					});
 			};
 
-			$scope.updateForm = function () {
-				$http.put('/api/forms/' + $scope.formId, $scope.formDate)
-					.success(function () {
-						$location.url('/index');
+			$scope.updateForm = function (existingForm) {
+				$http.put('/api/forms', existingForm)
+					.success(function (response) {
+						if(response.success)
+							$scope.formData = response.data;
+						//$location.url('/index');
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
