@@ -1,5 +1,5 @@
-describe("indexListCtrl >", function(){
-	describe("Forms List Section >", function(){
+describe("indexListCtrl", function(){
+	describe("Forms List Section", function(){
 		var scope,controller,$httpBackend;
 		beforeEach(module("tulaVotesApp"));
 		beforeEach(inject(function(_$httpBackend_, $rootScope, $controller){
@@ -23,7 +23,7 @@ describe("indexListCtrl >", function(){
 	});
 });
 
-describe("editFormCtrl >", function(){
+describe("editFormCtrl", function(){
 	var scope,controller,$httpBackend, routeParams;
 	beforeEach(module("tulaVotesApp"));
 	afterEach(function(){
@@ -119,4 +119,4 @@ describe("editFormCtrl >", function(){
 	}));
 });
 
-describe("viewFormCtrl >", function(){});
+describe("viewFormCtrl", function(){});

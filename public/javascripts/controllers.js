@@ -43,9 +43,10 @@ angular.module('tulaVotesControllers', [])
 			$scope.createForm = function (newForm) {
 				$http.post('/api/forms', newForm)
 					.success(function (response) {
-						if(response.success)
+						if (response.success) {
 							$scope.formData = response.data;
-						//$location.url('/index');
+							$scope.isNew = false;
+						}
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
@@ -57,10 +58,13 @@ angular.module('tulaVotesControllers', [])
 					.success(function (response) {
 						if(response.success)
 							$scope.formData = response.data;
-						//$location.url('/index');
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
 					});
 			};
+
+			$scope.goBack = function(){
+				$location.url('/index');
+			}
 		}]);
