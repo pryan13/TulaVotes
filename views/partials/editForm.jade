@@ -2,19 +2,27 @@
 	form(role='form')
 		.form-group
 			label(for='name') Name
-			input(ng-model='formDate.name', type='text', class='form-control', id="name", placeholder="Enter name")
+			input(ng-model='formData.name', type='text', class='form-control', id="name", placeholder="Enter name")
 	
 		.form-group
 			label(for='decription') Description
-			textarea(ng-model='formDate.description', class="form-control", id="decription", rows="3")
+			textarea(ng-model='formData.description', class="form-control", id="decription", rows="3")
 		.form-group
 			label(for="type") Type
-			select(ng-model='formDate.type', class="form-control", id="type")
+			select(ng-model='formData.type', class="form-control", id="type")
 				option(value='') Please select...
 				option(value='radio') Radio
 				option(value='checkbox') Checkbox
 		.checkbox
 			label Is Active
-				input(type="checkbox", ng-model='formDate.isActive')
-		button(ng-if="isNew", class="btn btn-default", ng-click='createForm()') Create
-		button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm()') Save
+				input(type="checkbox", ng-model='formData.isActive')
+	.row
+		.col-sm-6.text-left
+			button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
+			button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
+			button(class="btn btn-default", ng-click='goBack()') Back
+			//notify-holder
+		//.alert(ng-class="{true: 'alert-success', false: 'alert-danger'}[isSuccess]")
+		//	a.close(href="javascript:", data-dismiss="alert") &times;
+		//	strong Error
+		//	|  {{message}}

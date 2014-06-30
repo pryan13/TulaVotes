@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', [])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants'])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
 			//get list of forms
@@ -23,43 +23,52 @@ angular.module('tulaVotesControllers', [])
 			};
 		}
 	])
-	.controller('viewFormCtrl', ['$scope', '$routeParams',
-		function ($scope, $routeParams) {
-			//get concrete form
-			$scope.formId = $routeParams.formId;
+	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http',
+		function ($scope, $routeParams, $http) {
 		}])
-	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location',
-		function($scope, $routeParams, $http, $location){
-			$scope.formId = $routeParams.formId;
-			$scope.isNew = $scope.formId === undefined;
+	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
+		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
+			$scope.isNew = $routeParams.formId === undefined;
 			
-			if ($scope.formId !== undefined){
-				$http.get('/api/forms/' + $scope.formId)
+			if (!$scope.isNew){
+				$http.get('/api/forms/' + $routeParams.formId)
 				.success(function (response) {
-					$scope.formDate = response.data;
+					$scope.formData = response.data;
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
 				});
 			}
 			
-			$scope.createForm = function () {
-				$http.post('/api/forms', $scope.formDate)
-					.success(function () {
-						$location.url('/index');
+			$scope.createForm = function (newForm) {
+				$http.post('/api/forms', newForm)
+					.success(function (response) {
+						if (response.success) {
+							$scope.formData = response.data;
+							$scope.isNew = false;
+						}
+						NotifyService.notify({type: NOTIFICATION_TYPES.success});
 					})
 					.error(function (response) {
+						NotifyService.notify({type: NOTIFICATION_TYPES.error});
 						console.log('Error: ' + response);
 					});
 			};
 
-			$scope.updateForm = function () {
-				$http.put('/api/forms/' + $scope.formId, $scope.formDate)
-					.success(function () {
-						$location.url('/index');
+			$scope.updateForm = function (existingForm) {
+				$http.put('/api/forms', existingForm)
+					.success(function (response) {
+						if(response.success)
+							$scope.formData = response.data;
+						NotifyService.notify({type: NOTIFICATION_TYPES.success});
 					})
 					.error(function (response) {
+						NotifyService.notify({type: NOTIFICATION_TYPES.error});
 						console.log('Error: ' + response);
 					});
 			};
+
+			$scope.goBack = function(){
+				$location.url('/index');
+			}
 		}]);

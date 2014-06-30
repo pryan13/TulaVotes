@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var dal = require('../db/dal');
+var config = require('../config/wrapper')();
+var dal = require('../db/dal')(config);
 
 var getFormList = function(res){
 	dal.getList(function(err, forms){
@@ -43,7 +44,7 @@ router.post('/forms', function (req, res) {
 });
 
 //update form
-router.put('/forms/:formId', function (req, res) {
+router.put('/forms', function (req, res) {
 	dal.updateForm(req.body, function (err, form) {
 		onRequestComplete(res, err, form);
 	});
@@ -53,7 +54,7 @@ router.put('/forms/:formId', function (req, res) {
 router.delete('/forms/:formId', function (req, res) {
 	dal.deleteForm(req.params.formId, function (err) {
 		onRequestComplete(res, err, null, function () {
-			getFormList();
+			getFormList(res);
 		});
 	})
 });

@@ -4,8 +4,7 @@
 	"private": true,
 	"scripts": {
 		"prestart": "npm install",
-		"start": "node ./bin/www  --configuration staging",
-		"test": "node ./node_modules/karma/bin/karma start test/karma.conf.js"
+		"start": "node ./bin/www  --configuration staging"
 	},
 	"main": "./bin/www  --configuration staging",
 	"dependencies": {

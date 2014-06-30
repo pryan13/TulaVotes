@@ -3,7 +3,6 @@
 /bower_components
 /public/javascripts/lib
 .jshintrc
-.npmignore
 .project
 .settings
 README.md
