@@ -4,12 +4,14 @@ block titleContent
 	|Tula Votes!
 
 block bodyContent
+	.notify-area
+		.container
+			notify-holder
 	.container
 		.row
-			.col-sm-6.text-left
+			.col-sm-12.text-left
 				span.badge
 					a.link-white(href='#/create') create form
-			.col-sm-6.text-right
 				span.badge
 					a.link-white(href='/logout')= userEmail
 						|  | logout
@@ -18,3 +20,5 @@ block bodyContent
 	script(src='javascripts/lib/angular-route.js')
 	script(src='javascripts/core.js')
 	script(src='javascripts/controllers.js')
+	script(src='javascripts/constants.js')
+	script(src='javascripts/notify.js')

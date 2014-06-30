@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', [])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants'])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
 			//get list of forms
@@ -26,8 +26,8 @@ angular.module('tulaVotesControllers', [])
 	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http',
 		function ($scope, $routeParams, $http) {
 		}])
-	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location',
-		function($scope, $routeParams, $http, $location){
+	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
+		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
 			
 			if (!$scope.isNew){
@@ -47,8 +47,10 @@ angular.module('tulaVotesControllers', [])
 							$scope.formData = response.data;
 							$scope.isNew = false;
 						}
+						NotifyService.notify({type: NOTIFICATION_TYPES.success});
 					})
 					.error(function (response) {
+						NotifyService.notify({type: NOTIFICATION_TYPES.error});
 						console.log('Error: ' + response);
 					});
 			};
@@ -58,8 +60,10 @@ angular.module('tulaVotesControllers', [])
 					.success(function (response) {
 						if(response.success)
 							$scope.formData = response.data;
+						NotifyService.notify({type: NOTIFICATION_TYPES.success});
 					})
 					.error(function (response) {
+						NotifyService.notify({type: NOTIFICATION_TYPES.error});
 						console.log('Error: ' + response);
 					});
 			};

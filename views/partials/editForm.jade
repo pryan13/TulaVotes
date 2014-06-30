@@ -16,6 +16,13 @@
 		.checkbox
 			label Is Active
 				input(type="checkbox", ng-model='formData.isActive')
-		button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
-		button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
-		button(class="btn btn-default", ng-click='goBack()') Back
+	.row
+		.col-sm-6.text-left
+			button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
+			button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
+			button(class="btn btn-default", ng-click='goBack()') Back
+			//notify-holder
+		//.alert(ng-class="{true: 'alert-success', false: 'alert-danger'}[isSuccess]")
+		//	a.close(href="javascript:", data-dismiss="alert") &times;
+		//	strong Error
+		//	|  {{message}}
