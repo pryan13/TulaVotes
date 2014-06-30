@@ -18,10 +18,12 @@ angular.module("tulaVotes.notify", [])
 								"</div>" +
 							"</notify-message>");
 					var newScope = $rootScope.$new();
-					domElement.empty();
-					$timeout(function(){
-						domElement.append($compile(template)(newScope));
-					}, 300);
+					if(domElement) {
+						domElement.empty();
+						$timeout(function () {
+							domElement.append($compile(template)(newScope));
+						}, 300);
+					}
 				};
 				this.defineHolder = function(element){
 					domElement = element;
