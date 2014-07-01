@@ -11,9 +11,9 @@ block bodyContent
 		.row
 			.col-sm-12.text-left
 				span.badge
-					a.link-white(href='#/create') create form
+					a.link-white(href='#/create', id="createFormLink") create form
 				span.badge
-					a.link-white(href='/logout')= userEmail
+					a.link-white(href='/logout', id="logoutLink")= userEmail
 						|  | logout
 	div(style='margin: 5px;', ng-view)
 	script(src='javascripts/lib/angular.js')

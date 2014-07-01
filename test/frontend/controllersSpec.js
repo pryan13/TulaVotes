@@ -117,6 +117,102 @@ describe("editFormCtrl", function(){
 		$httpBackend.flush();
 		expect(scope.formData).toEqual(updatedForm);
 	}));
+
+	it("should provide at least one form option to fill", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		scope = $rootScope.$new();
+		controller = $controller("editFormCtrl", {$scope: scope});
+		expect(scope.formOptions).toBeDefined();
+		expect(scope.formOptions.length).toEqual(1);
+
+		var id = '538f2a679c8bfa0000ded5ec',
+			form = {
+				_id: id,
+				__v: '0',
+				name: 'Form Name',
+				description: 'Form Description',
+				type: 'radio',
+				isActive: true,
+				options: [{
+					text: "", checked: false
+				}]
+			};
+		$httpBackend = _$httpBackend_;
+		$httpBackend.expectGET("/api/forms/" + id)
+			.respond({success: true, data: form});
+		routeParams = $routeParams;
+		scope = $rootScope.$new();
+		routeParams.formId = id;
+		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+		$httpBackend.flush();
+		expect(scope.formOptions).toBeDefined();
+		expect(scope.formOptions.length).toEqual(1);
+	}));
+
+	it("should add form option", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		scope = $rootScope.$new();
+		controller = $controller("editFormCtrl", {$scope: scope});
+		expect(scope.formOptions).toBeDefined();
+		expect(scope.formOptions.length).toEqual(1);
+		scope.addOption();
+		expect(scope.formOptions.length).toEqual(2);
+
+		var id = '538f2a679c8bfa0000ded5ec',
+			form = {
+				_id: id,
+				__v: '0',
+				name: 'Form Name',
+				description: 'Form Description',
+				type: 'radio',
+				isActive: true,
+				options: [{
+					text: "", checked: false
+				}]
+			};
+		$httpBackend = _$httpBackend_;
+		$httpBackend.expectGET("/api/forms/" + id)
+			.respond({success: true, data: form});
+		routeParams = $routeParams;
+		scope = $rootScope.$new();
+		routeParams.formId = id;
+		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+		$httpBackend.flush();
+		expect(scope.formOptions).toBeDefined();
+		expect(scope.formOptions.length).toEqual(1);
+	}));
+
+	it("should delete form option", inject(function(_$httpBackend_, $routeParams, $rootScope, $controller){
+		scope = $rootScope.$new();
+		controller = $controller("editFormCtrl", {$scope: scope});
+		expect(scope.formOptions).toBeDefined();
+		expect(scope.formOptions.length).toEqual(1);
+		scope.addOption();
+		expect(scope.formOptions.length).toEqual(2);
+		scope.deleteOption('1');
+		expect(scope.formOptions.length).toEqual(1);
+
+//		var id = '538f2a679c8bfa0000ded5ec',
+//			form = {
+//				_id: id,
+//				__v: '0',
+//				name: 'Form Name',
+//				description: 'Form Description',
+//				type: 'radio',
+//				isActive: true,
+//				options: [{
+//					text: "", checked: false
+//				}]
+//			};
+//		$httpBackend = _$httpBackend_;
+//		$httpBackend.expectGET("/api/forms/" + id)
+//			.respond({success: true, data: form});
+//		routeParams = $routeParams;
+//		scope = $rootScope.$new();
+//		routeParams.formId = id;
+//		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+//		$httpBackend.flush();
+//		expect(scope.formOptions).toBeDefined();
+//		expect(scope.formOptions.length).toEqual(1);
+	}));
 });
 
 describe("viewFormCtrl", function(){});

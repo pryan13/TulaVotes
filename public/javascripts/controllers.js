@@ -29,16 +29,28 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
+			$scope.formOptions = [];
+			if($scope.isNew)
+				$scope.formOptions.push({text: "", checked: false});
 			
 			if (!$scope.isNew){
 				$http.get('/api/forms/' + $routeParams.formId)
 				.success(function (response) {
-					$scope.formData = response.data;
+					$scope.formData = response.data
+					$scope.formOptions = response.data.options;
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
 				});
 			}
+
+			$scope.addOption = function(){
+				$scope.formOptions.push({text: "", checked: false});
+			};
+
+			$scope.deleteOption = function(optNum){
+				$scope.formOptions.splice(optNum, 1);
+			};
 			
 			$scope.createForm = function (newForm) {
 				$http.post('/api/forms', newForm)

@@ -1,4 +1,4 @@
-describe('Login page >', function(){
+describe('Application', function(){
 
 	browser.ignoreSynchronization = true;
 

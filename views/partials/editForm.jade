@@ -2,27 +2,33 @@
 	form(role='form')
 		.form-group
 			label(for='name') Name
-			input(ng-model='formData.name', type='text', class='form-control', id="name", placeholder="Enter name")
+			input.form-control(ng-model='formData.name', type='text', id="name", placeholder="Enter name")
 	
 		.form-group
 			label(for='decription') Description
-			textarea(ng-model='formData.description', class="form-control", id="decription", rows="3")
+			textarea.form-control(ng-model='formData.description', id="decription", rows="3")
 		.form-group
 			label(for="type") Type
-			select(ng-model='formData.type', class="form-control", id="type")
-				option(value='') Please select...
+			select.form-control(ng-model='formData.type', id="type")
 				option(value='radio') Radio
 				option(value='checkbox') Checkbox
 		.checkbox
 			label Is Active
 				input(type="checkbox", ng-model='formData.isActive')
+		.form-group
+			label Options
+			div(ng-repeat="option in formOptions")
+				.form-group.row
+					.col-sm-10.text-left
+						textarea.form-control(ng-model='option.text', placeholder="Enter your text here", rows="3")
+					.col-sm-2.text-left
+						a.close(href="javascript:void(0)", ng-click="deleteOption('{{$index}}')", data-dismiss="alert") &times;
+			.row
+				.col-sm-6.text-left
+					button(class="btn btn-default", ng-click="addOption()", id="btnAddOption") Click to add option
+
 	.row
 		.col-sm-6.text-left
 			button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
 			button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
 			button(class="btn btn-default", ng-click='goBack()') Back
-			//notify-holder
-		//.alert(ng-class="{true: 'alert-success', false: 'alert-danger'}[isSuccess]")
-		//	a.close(href="javascript:", data-dismiss="alert") &times;
-		//	strong Error
-		//	|  {{message}}
