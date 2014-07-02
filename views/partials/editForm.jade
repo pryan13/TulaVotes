@@ -22,7 +22,7 @@
 					.col-sm-10.text-left
 						textarea.form-control(ng-model='option.text', placeholder="Enter your text here", rows="3")
 					.col-sm-2.text-left
-						a.close(href="javascript:void(0)", ng-click="deleteOption('{{$index}}')", data-dismiss="alert") &times;
+						a.close(ng-if="$index>0", href="javascript:void(0)", ng-click="deleteOption('{{$index}}')", data-dismiss="alert") &times;
 			.row
 				.col-sm-6.text-left
 					button(class="btn btn-default", ng-click="addOption()", id="btnAddOption") Click to add option

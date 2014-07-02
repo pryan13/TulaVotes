@@ -7,7 +7,8 @@ module.exports = function(config) {
 		name: String,
 		description: String,
 		type: { type: String, enum: ['radio', 'checkbox'] },
-		isActive: Boolean
+		isActive: Boolean,
+		formOptions: []
 	});
 
 	return mongoose.model('Form', formSchema);

@@ -37,7 +37,9 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				$http.get('/api/forms/' + $routeParams.formId)
 				.success(function (response) {
 					$scope.formData = response.data
-					$scope.formOptions = response.data.options;
+					$scope.formOptions = response.data.formOptions;
+						if($scope.formOptions.length == 0)
+							$scope.formOptions.push({text: "", checked: false});
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);

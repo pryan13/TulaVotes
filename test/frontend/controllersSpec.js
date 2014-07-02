@@ -132,7 +132,7 @@ describe("editFormCtrl", function(){
 				description: 'Form Description',
 				type: 'radio',
 				isActive: true,
-				options: [{
+				formOptions: [{
 					text: "", checked: false
 				}]
 			};
@@ -164,7 +164,7 @@ describe("editFormCtrl", function(){
 				description: 'Form Description',
 				type: 'radio',
 				isActive: true,
-				options: [{
+				formOptions: [{
 					text: "", checked: false
 				}]
 			};
@@ -190,28 +190,28 @@ describe("editFormCtrl", function(){
 		scope.deleteOption('1');
 		expect(scope.formOptions.length).toEqual(1);
 
-//		var id = '538f2a679c8bfa0000ded5ec',
-//			form = {
-//				_id: id,
-//				__v: '0',
-//				name: 'Form Name',
-//				description: 'Form Description',
-//				type: 'radio',
-//				isActive: true,
-//				options: [{
-//					text: "", checked: false
-//				}]
-//			};
-//		$httpBackend = _$httpBackend_;
-//		$httpBackend.expectGET("/api/forms/" + id)
-//			.respond({success: true, data: form});
-//		routeParams = $routeParams;
-//		scope = $rootScope.$new();
-//		routeParams.formId = id;
-//		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
-//		$httpBackend.flush();
-//		expect(scope.formOptions).toBeDefined();
-//		expect(scope.formOptions.length).toEqual(1);
+		var id = '538f2a679c8bfa0000ded5ec',
+			form = {
+				_id: id,
+				__v: '0',
+				name: 'Form Name',
+				description: 'Form Description',
+				type: 'radio',
+				isActive: true,
+				formOptions: [{
+					text: "", checked: false
+				}]
+			};
+		$httpBackend = _$httpBackend_;
+		$httpBackend.expectGET("/api/forms/" + id)
+			.respond({success: true, data: form});
+		routeParams = $routeParams;
+		scope = $rootScope.$new();
+		routeParams.formId = id;
+		controller = $controller("editFormCtrl", {$scope: scope, $routeParams: routeParams});
+		$httpBackend.flush();
+		expect(scope.formOptions).toBeDefined();
+		expect(scope.formOptions.length).toEqual(1);
 	}));
 });
 

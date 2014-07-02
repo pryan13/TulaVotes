@@ -15,7 +15,8 @@ exports.config = {
 
 	suites: {
 		login: ['../loginScenario.js'],
-		createForm: ['../createFormScenario.js']
+		createForm: ['../createFormScenario.js'],
+		editForm: ['../editFormScenario.js']
 	},
 
 	// Options to be passed to Jasmine-node.

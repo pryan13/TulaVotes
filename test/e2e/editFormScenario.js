@@ -1,14 +1,14 @@
 describe("Application", function(){
 	browser.ignoreSynchronization = true;
 
-	it("should redirect user to create form page when create form button clicked", function(){
+	it("should redirect user to edit form page when any edit button clicked", function(){
 		browser.driver.get("http://localhost:3000");
 		expect(browser.driver.getCurrentUrl()).toEqual("http://localhost:3000/login");
 		element(by.name('email')).sendKeys('master');
 		element(by.buttonText("OK")).click();
 		expect(browser.driver.getCurrentUrl()).toEqual("http://localhost:3000/#/index");
-		element(by.id("createFormLink")).click();
-		expect(browser.driver.getCurrentUrl()).toEqual("http://localhost:3000/#/create/");
+		element(by.repeater("form in forms").row(0)).element(by.css(".link-white")).click();
+		expect(browser.driver.getCurrentUrl()).toMatch("http://localhost:3000/#/edit/");
 	});
 
 	var checkOptionsCount = function(expectedCount){
