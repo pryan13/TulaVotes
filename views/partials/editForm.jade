@@ -17,12 +17,12 @@
 				input(type="checkbox", ng-model='formData.isActive')
 		.form-group
 			label Options
-			div(ng-repeat="option in formOptions")
+			div(ng-repeat="option in formData.formOptions")
 				.form-group.row
 					.col-sm-10.text-left
 						textarea.form-control(ng-model='option.text', placeholder="Enter your text here", rows="3")
-					.col-sm-2.text-left
-						a.close(ng-if="$index>0", href="javascript:void(0)", ng-click="deleteOption('{{$index}}')", data-dismiss="alert") &times;
+					.col-sm-2.text-left(ng-if="$index>0 || formData.formOptions.length > 1")
+						a.close(href="javascript:void(0)", ng-click="deleteOption($index)", data-dismiss="alert") &times;
 			.row
 				.col-sm-6.text-left
 					button(class="btn btn-default", ng-click="addOption()", id="btnAddOption") Click to add option

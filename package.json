@@ -11,7 +11,9 @@
 		"preprotractor.chrome": "webdriver-manager update",
 		"protractor.chrome": "protractor test/e2e/config/protractor.chrome.conf.js",
 		"preprotractor.firefox": "webdriver-manager update",
-		"protractor.firefox": "protractor test/e2e/config/protractor.firefox.conf.js",
+		"protractor.firefox.login": "protractor test/e2e/config/protractor.firefox.conf.js --suite login",
+		"protractor.firefox.createForm": "protractor test/e2e/config/protractor.firefox.conf.js --suite createForm",
+		"protractor.firefox.editForm": "protractor test/e2e/config/protractor.firefox.conf.js --suite editForm",
 		"protractor.phantom": "protractor test/e2e/config/protractor.phantom.conf.js"
 	},
 	"main": "./bin/www",

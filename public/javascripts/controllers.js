@@ -29,17 +29,18 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
-			$scope.formOptions = [];
-			if($scope.isNew)
-				$scope.formOptions.push({text: "", checked: false});
+			//$scope.formOptions = [];
+			if($scope.isNew){
+				$scope.formData = {formOptions: []};
+				$scope.formData.formOptions.push({text: "", checked: false});
+			}
 			
 			if (!$scope.isNew){
 				$http.get('/api/forms/' + $routeParams.formId)
 				.success(function (response) {
 					$scope.formData = response.data
-					$scope.formOptions = response.data.formOptions;
-						if($scope.formOptions.length == 0)
-							$scope.formOptions.push({text: "", checked: false});
+					if($scope.formData.formOptions.length == 0)
+						$scope.formData.formOptions.push({text: "", checked: false});
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
@@ -47,11 +48,11 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			}
 
 			$scope.addOption = function(){
-				$scope.formOptions.push({text: "", checked: false});
+				$scope.formData.formOptions.push({text: "", checked: false});
 			};
 
 			$scope.deleteOption = function(optNum){
-				$scope.formOptions.splice(optNum, 1);
+				$scope.formData.formOptions.splice(optNum, 1);
 			};
 			
 			$scope.createForm = function (newForm) {

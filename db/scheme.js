@@ -6,7 +6,7 @@ module.exports = function(config) {
 	var formSchema = new mongoose.Schema({
 		name: String,
 		description: String,
-		type: { type: String, enum: ['radio', 'checkbox'] },
+		type: { type: String, enum: ['radio', 'checkbox'], default: 'radio' },
 		isActive: Boolean,
 		formOptions: []
 	});

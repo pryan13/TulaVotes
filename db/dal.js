@@ -20,7 +20,8 @@ module.exports = function(config) {
 			name: data.name,
 			description: data.description,
 			type: data.type,
-			isActive: data.isActive
+			isActive: data.isActive,
+			formOptions: data.formOptions
 		});
 		item.save(function (err, form) {
 			onComplete(err, form);
@@ -33,6 +34,7 @@ module.exports = function(config) {
 			form.description = data.description;
 			form.type = data.type;
 			form.isActive = data.isActive;
+			form.formOptions = data.formOptions;
 			form.save(function (err, form) {
 				onComplete(err, form);
 			});

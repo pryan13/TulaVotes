@@ -12,7 +12,7 @@ describe("Application", function(){
 	});
 
 	var checkOptionsCount = function(expectedCount){
-		var optionsCount = element.all(by.repeater("option in formOptions")).count();
+		var optionsCount = element.all(by.repeater("option in formData.formOptions")).count();
 		expect(optionsCount).toEqual(expectedCount);
 	};
 
@@ -25,12 +25,12 @@ describe("Application", function(){
 			checkOptionsCount(2);
 		});
 		it("should allow delete existing options with Delete button click", function(){
-			element(by.repeater("option in formOptions").row(1)).element(by.css(".close")).click();
+			element(by.repeater("option in formData.formOptions").row(1)).element(by.css(".close")).click();
 			checkOptionsCount(1);
 		});
 		it("should not allow remain form without at least one option", function(){
 			checkOptionsCount(1);
-			var isCloseBtnExist = element(by.repeater("option in formOptions").row(0)).isElementPresent(by.css(".close"));
+			var isCloseBtnExist = element(by.repeater("option in formData.formOptions").row(0)).isElementPresent(by.css(".close"));
 			expect(isCloseBtnExist).toBeFalsy();
 		});
 	});
