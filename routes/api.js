@@ -20,7 +20,7 @@ var onRequestComplete = function(res, err, data, onSuccessCallback){
 	else{
 		console.log(err);
 		res.statusCode = 500;
-		res.send({ error: 'Server error' });
+		res.send({success: false, error: err.toString()});
 	}
 };
 
@@ -29,11 +29,25 @@ router.get('/forms', function (req, res) {
 	getFormList(res);
 });
 
-//get details
+//get details for edit
 router.get('/forms/:formId', function (req, res) {
 	dal.getForm(req.params.formId, function(err, form){
 		onRequestComplete(res, err, form);
 	});
+});
+
+//get details for view
+router.get('/forms/view/:formId', function (req, res) {
+	dal.getFormView({formId: req.params.formId, requestedBy: req.session.userEmail}, function(err, form){
+		onRequestComplete(res, err, form);
+	});
+});
+
+//save vote
+router.post('/forms/vote', function (req, res) {
+	dal.voteOnForm({voteData: req.body, requestedBy: req.session.userEmail}, function(err, form){
+		onRequestComplete(res, err, form);
+	})
 });
 
 //create form
