@@ -10,8 +10,50 @@ module.exports = function(config) {
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findById(id, function (err, form) {
+		formDbObject.findOne({_id: id}).exec(function (err, form) {
 			onComplete(err, form);
+		});
+	};
+
+	var getFormView = function (data, onComplete) {
+		formDbObject.findOne({_id: data.formId}).exec(function (err, form) {
+			var result = {
+				_id: form._id,
+				name: form.name,
+				description: form.description,
+				type: form.type,
+				formOptions: [],
+				hasAlreadyVoted: false
+			};
+			for(var i = 0; i < form.formOptions.length; i++){
+				result.formOptions.push({
+					_id: form.formOptions[i]._id,
+					text: form.formOptions[i].text,
+					checked: form.formOptions[i].votes
+						&& form.formOptions[i].votes.length > 0
+						&& form.formOptions[i].votes.indexOf(data.requestedBy) > -1
+				});
+			}
+			onComplete(err, result);
+		});
+	};
+
+	var voteOnForm = function (data, onComplete) {
+		formDbObject.findById(data.voteData.formId, function (err, form) {
+			for (var j = 0; j < form.formOptions.length; j++) {
+				var requesterVotePos = form.formOptions[j].votes.indexOf(data.requestedBy);
+				if(requesterVotePos >= 0)
+					form.formOptions[j].votes.splice(requesterVotePos, 1);
+				for(var i = 0; i < data.voteData.selectedOptions.length; i++) {
+					if (form.formOptions[j]._id != data.voteData.selectedOptions[i])
+						continue;
+					form.formOptions[j].votes.push(data.requestedBy);
+					break;
+				}
+			}
+			form.save(function (err, form) {
+				onComplete(err, form);
+			});
 		});
 	};
 
@@ -52,6 +94,8 @@ module.exports = function(config) {
 	return {
 		getList: getList,
 		getForm: getForm,
+		getFormView: getFormView,
+		voteOnForm: voteOnForm,
 		createForm: createForm,
 		updateForm: updateForm,
 		deleteForm: deleteForm
