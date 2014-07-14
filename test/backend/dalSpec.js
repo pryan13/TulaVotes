@@ -53,19 +53,22 @@ describe("DAL", function() {
 						name: "form 1",
 						description: "form desc 1",
 						type: 'radio',
-						isActive: true
+						isActive: true,
+						formOptions: [{text: "new option", checked: false}, {text: "one more new option", checked: false}]
 					},
 					{
 						name: "form 2",
 						description: "form desc 2",
 						type: 'radio',
-						isActive: true
+						isActive: true,
+						formOptions: [{text: "new option", checked: false}, {text: "one more new option", checked: false}]
 					},
 					{
 						name: "form 3",
 						description: "form desc 3",
 						type: 'checkbox',
-						isActive: true
+						isActive: true,
+						formOptions: [{text: "new option", checked: false}, {text: "one more new option", checked: false}]
 					}
 				];
 				mdb.open(function (err, db) {
@@ -110,7 +113,8 @@ describe("DAL", function() {
 						name: "form 1",
 						description: "form desc 1",
 						type: 'radio',
-						isActive: true
+						isActive: true,
+						formOptions: [{text: "new option", checked: false}]
 					};
 				mdb.open(function (err, db) {
 					db.dropCollection("forms", function (err, result) {
@@ -123,6 +127,8 @@ describe("DAL", function() {
 										expect(form.description).toEqual(formFound.description);
 										expect(form.type).toEqual(formFound.type);
 										expect(form.isActive).toEqual(formFound.isActive);
+										expect(form.formOptions.length).toEqual(formFound.formOptions.length);
+										expect(form.formOptions[0]).toEqual(formFound.formOptions[0]);
 									});
 									mdb.close();
 									done();
@@ -140,7 +146,8 @@ describe("DAL", function() {
 					name: "new form",
 					description: "new form desc",
 					type: 'radio',
-					isActive: true
+					isActive: true,
+					formOptions: [{text: "new option", checked: false}, {text: "one more new option", checked: false}]
 				};
 				mdb.open(function (err, db) {
 					db.dropCollection("forms", function (err, result) {
@@ -152,6 +159,7 @@ describe("DAL", function() {
 									expect(createdForm.description).toEqual(formFound.description);
 									expect(createdForm.type).toEqual(formFound.type);
 									expect(createdForm.isActive).toEqual(formFound.isActive);
+									expect(form.formOptions).toEqual(formFound.formOptions);
 									mdb.close();
 									done();
 								});
@@ -168,13 +176,15 @@ describe("DAL", function() {
 						name: "new form",
 						description: "new form desc",
 						type: 'radio',
-						isActive: true
+						isActive: true,
+						formOptions: [{text: "new option", checked: false}]
 					},
 					updated = {
 						name: "updated form",
 						description: "updated form desc",
 						type: 'checkbox',
-						isActive: false
+						isActive: false,
+						formOptions: [{text: "updated option", checked: false}, {text: "another updated option", checked: false}]
 					};
 				mdb.open(function (err, db) {
 					db.dropCollection("forms", function (err, result) {
@@ -188,6 +198,9 @@ describe("DAL", function() {
 										expect(updatedForm.description).toEqual(updated.description);
 										expect(updatedForm.type).toEqual(updated.type);
 										expect(updatedForm.isActive).toEqual(updated.isActive);
+										//expect(updatedForm.formOptions).toEqual(updated.formOptions);
+										expect(updatedForm.formOptions.length).toEqual(updated.formOptions.length);
+										expect(updatedForm.formOptions[0]).toEqual(updated.formOptions[0]);
 										mdb.close();
 										done();
 									});
@@ -205,7 +218,8 @@ describe("DAL", function() {
 						name: "new form",
 						description: "new form desc",
 						type: 'radio',
-						isActive: true
+						isActive: true,
+						formOptions: [{text: "new option", checked: false}, {text: "one more new option", checked: false}]
 					};
 				mdb.open(function (err, db) {
 					db.dropCollection("forms", function (err, result) {

@@ -40,6 +40,7 @@ module.exports = {
 		allowedUsers: [
 			"vdanilov@tula.co",
 			"aandrushkevich@tula.co",
+			"ashakh@tula.co",
 			"master"
 		]
 	}

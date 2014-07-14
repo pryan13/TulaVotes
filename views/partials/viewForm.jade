@@ -1,3 +1,15 @@
-div
-	|Hey! Edit your {{formId}} form
-
+.container
+	.row
+		.col-sm-6.text-left
+			h3 {{formData.name}}
+	.row
+		.col-sm-6.text-left
+			p {{formData.description}}
+	div(ng-repeat="option in formData.formOptions")
+		.row
+			.col-sm6.text-left
+				input(type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="hasAlreadyVoted")
+				span {{option.text}}
+	.row
+		.col-sm-6.text-left
+			button(ng-if="!hasAlreadyVoted", class="btn btn-default", ng-click='vote(formData)') Vote
