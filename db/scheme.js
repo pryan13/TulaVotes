@@ -28,5 +28,8 @@ module.exports = function(config) {
 
 	var Form = mongoose.model('Form', formSchema);
 
-	return Form;
+	return {
+		userObject: User,
+		formObject: Form
+	};
 };

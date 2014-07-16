@@ -1,7 +1,36 @@
 module.exports = function(config) {
-	var formDbObject = require('./scheme')(config);
+	var dbObject = require('./scheme')(config),
+		userDbObject = dbObject.userObject,
+		formDbObject = dbObject.formObject;
 
 	//methods
+
+	var findUserById = function(userId, onComplete){
+		userDbObject.findOne({_id: userId}, function(err, user){
+			onComplete(user);
+		});
+	};
+
+	var getOrCreateUser = function(data, onComplete){
+		if(config.allowedUsers.indexOf(data.email) < 0)
+			onComplete();
+		else{
+			userDbObject.findOne({email: data.email}, function(err, existingUser){
+				if(existingUser){
+					onComplete(existingUser);
+				}
+				else{
+					var newUser = new userDbObject({
+						email: data.email,
+						name: data.name || data.email.split('@')[0]
+					});
+					newUser.save(function (err, savedUser) {
+						onComplete(savedUser);
+					});
+				}
+			});
+		}
+	};
 
 	var getList = function (onComplete) {
 		formDbObject.find(function (err, forms) {
@@ -92,6 +121,9 @@ module.exports = function(config) {
 	};
 
 	return {
+		findUserById: findUserById,
+		getOrCreateUser: getOrCreateUser,
+
 		getList: getList,
 		getForm: getForm,
 		getFormView: getFormView,
