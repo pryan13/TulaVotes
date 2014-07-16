@@ -19,7 +19,7 @@ module.exports = function(config) {
 			type: [{
 				text: {type: String, required: 'Field {PATH} is required!'},
 				votes: {
-					type: [String]
+					type: [mongoose.Schema.Types.ObjectId]
 				}
 			}],
 			required: 'Field {PATH} is required!'
