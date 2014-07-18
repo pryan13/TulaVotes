@@ -1,13 +1,18 @@
 .container
 	.row
 		.col-sm-6.text-left
+			i {{formData.createdBy}}
+			| &nbsp;create at&nbsp;
+			i {{formData.createdAt | date: 'H:mm MM/dd/yyyy'}}
+	.row
+		.col-sm-6.text-left
 			h3 {{formData.name}}
 	.row
 		.col-sm-6.text-left
 			p {{formData.description}}
 	div(ng-repeat="option in formData.formOptions")
 		.row
-			.col-sm6.text-left
+			.col-sm6.text-left.checkbox
 				input(ng-if="hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="hasAlreadyVoted",value="true")
 				input(ng-if="!hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="hasAlreadyVoted",value="true")
 				span {{option.text}}

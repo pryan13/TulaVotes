@@ -68,7 +68,7 @@ module.exports = function(dal) {
 
 //create form
 	router.post('/forms', auth, function (req, res) {
-		dal.createForm(req.body, function (err, form) {
+		dal.createForm({formData: req.body, requestedBy: req.session.user.id}, function (err, form) {
 			onRequestComplete(res, err, form);
 		})
 	});

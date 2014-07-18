@@ -33,34 +33,41 @@ module.exports = function(config) {
 	};
 
 	var getList = function (onComplete) {
-		formDbObject.find(function (err, forms) {
+		formDbObject.find().populate('createdBy', 'name').exec(function (err, forms) {
 			onComplete(err, forms);
 		});
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findOne({_id: id}).exec(function (err, form) {
+		formDbObject.findOne({_id: id}).populate('createdBy').exec(function (err, form) {
 			onComplete(err, form);
 		});
 	};
 
 	var getFormView = function (data, onComplete) {
-		formDbObject.findOne({_id: data.formId}).exec(function (err, form) {
+		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').exec(function (err, form) {
 			var result = {
 				_id: form._id,
 				name: form.name,
 				description: form.description,
+				createdBy: form.createdBy.name,
+				createdAt: form.createdAt,
 				type: form.type,
 				formOptions: [],
 				hasAlreadyVoted: false
 			};
 			for(var i = 0; i < form.formOptions.length; i++){
+				var hasAlreadyVoted = false;
+				for(var j = 0; j < form.formOptions[i].votes.length; j++){
+					if(form.formOptions[i].votes[j].votedBy.toString() !== data.requestedBy)
+						continue;
+					hasAlreadyVoted = true;
+					break;
+				}
 				result.formOptions.push({
 					_id: form.formOptions[i]._id,
 					text: form.formOptions[i].text,
-					checked: form.formOptions[i].votes
-						&& form.formOptions[i].votes.length > 0
-						&& form.formOptions[i].votes.indexOf(data.requestedBy) > -1
+					checked: hasAlreadyVoted
 				});
 			}
 			onComplete(err, result);
@@ -76,7 +83,7 @@ module.exports = function(config) {
 				for(var i = 0; i < data.voteData.selectedOptions.length; i++) {
 					if (form.formOptions[j]._id != data.voteData.selectedOptions[i])
 						continue;
-					form.formOptions[j].votes.push(data.requestedBy);
+					form.formOptions[j].votes.push({votedBy: data.requestedBy});
 					break;
 				}
 			}
@@ -88,11 +95,12 @@ module.exports = function(config) {
 
 	var createForm = function (data, onComplete) {
 		var item = new formDbObject({
-			name: data.name,
-			description: data.description,
-			type: data.type,
-			isActive: data.isActive,
-			formOptions: data.formOptions
+			name: data.formData.name,
+			description: data.formData.description,
+			type: data.formData.type,
+			isActive: data.formData.isActive,
+			formOptions: data.formData.formOptions,
+			createdBy: data.requestedBy
 		});
 		item.save(function (err, form) {
 			onComplete(err, form);
