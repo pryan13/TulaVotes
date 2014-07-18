@@ -19,14 +19,22 @@ module.exports = function(config) {
 			type: [{
 				text: {type: String, required: 'Field {PATH} is required!'},
 				votes: {
-					type: [String]
+					type: [{
+						votedBy: {type: mongoose.Schema.Types.ObjectId, required: true},
+						votedAt: {type: Date, default: Date.now}
+					}]
 				}
 			}],
 			required: 'Field {PATH} is required!'
-		}
+		},
+		createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+		createdAt: {type: Date, default: Date.now}
 	});
 
 	var Form = mongoose.model('Form', formSchema);
 
-	return Form;
+	return {
+		userObject: User,
+		formObject: Form
+	};
 };

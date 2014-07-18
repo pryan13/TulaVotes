@@ -16,4 +16,9 @@
 						a.link-white(href='#/view/{{form._id}}') vote
 					span.badge(ng-click=('deleteForm(form._id)'))
 						|delete
-					|{{form.name}}
+					div
+						|{{form.name}}
+						br
+						i {{form.createdBy.name}}
+						| &nbsp;create at&nbsp;
+						i {{form.createdAt | date: 'H:mm MM/dd/yyyy'}}
