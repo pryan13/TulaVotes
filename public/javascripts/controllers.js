@@ -23,8 +23,8 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			};
 		}
 	])
-	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', 'NotifyService', 'NOTIFICATION_TYPES',
-		function ($scope, $routeParams, $http, NotifyService, NOTIFICATION_TYPES) {
+	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
+		function ($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES) {
 			$scope.hasAlreadyVoted = false;
 					$http.get('/api/forms/view/' + $routeParams.formId)
 						.success(function (response) {
@@ -57,13 +57,17 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						console.log('Error: ' + response);
 					});
 			};
+
+			$scope.goBack = function(){
+				$location.url('/index');
+			}
 		}])
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
 			//$scope.formOptions = [];
 			if($scope.isNew){
-				$scope.formData = {formOptions: []};
+				$scope.formData = {formOptions: [], type: 'radio'};
 				$scope.formData.formOptions.push({text: "", checked: false});
 			}
 			
