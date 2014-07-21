@@ -11,7 +11,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
-			"master"
+			"master@tula.co"
 		]
 	},
 	test: {
@@ -26,7 +26,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
-			"master"
+			"master@tula.co"
 		]
 	},
 	staging: {
@@ -41,7 +41,7 @@ module.exports = {
 			"vdanilov@tula.co",
 			"aandrushkevich@tula.co",
 			"ashakh@tula.co",
-			"master"
+			"master@tula.co"
 		]
 	}
 };
