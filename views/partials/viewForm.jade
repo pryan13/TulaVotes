@@ -10,13 +10,13 @@
 	.row
 		.col-sm-6.text-left
 			p {{formData.description}}
-	div(ng-repeat="option in formData.formOptions")
-		.row
-			.col-sm6.text-left.checkbox
-				input(ng-if="hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="hasAlreadyVoted",value="true")
-				input(ng-if="!hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="hasAlreadyVoted",value="true")
-				span {{option.text}}
+	div.row(ng-repeat="option in formData.formOptions")
+		.col-sm-6.text-left
+			input(ng-if="hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="hasAlreadyVoted",value="true")
+			input(ng-if="!hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="hasAlreadyVoted",value="true")
+			| {{option.text}}
 	.row
 		.col-sm-6.text-left
-			button(ng-if="!hasAlreadyVoted", class="btn btn-default", ng-click='vote(formData)') Vote
-			button(class="btn btn-default", ng-click='goBack()') Back
+			.btn-group
+				button(ng-if="!hasAlreadyVoted", class="btn btn-default", ng-click='vote(formData)') Vote
+				button(class="btn btn-default", ng-click='goBack()') Back

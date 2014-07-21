@@ -23,12 +23,13 @@
 						textarea.form-control(ng-model='option.text', placeholder="Enter your text here", rows="3")
 					.col-sm-2.text-left(ng-if="$index>0 || formData.formOptions.length > 1")
 						a.close(href="javascript:void(0)", ng-click="deleteOption($index)", data-dismiss="alert") &times;
-			.row
-				.col-sm-6.text-left
-					button(class="btn btn-default", ng-click="addOption()", id="btnAddOption") Click to add option
 
 	.row
 		.col-sm-6.text-left
-			button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
-			button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
-			button(class="btn btn-default", ng-click='goBack()') Back
+			.btn-toolbar
+				.btn-group
+					button(class="btn btn-default", ng-click="addOption()", id="btnAddOption") Click to add option
+				.btn-group
+					button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
+					button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
+					button(class="btn btn-default", ng-click='goBack()') Back
