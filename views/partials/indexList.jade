@@ -1,11 +1,13 @@
 .container
-	.jumbotron.text-center
+	.page-header.text-center
 		h2 Forms you can vote
 	.row
 		.col-sm-8.col-sm-offset-2.text-center
-			form
-				p
-					input(type='text',placeholder="Type to filter forms",ng-model="searchQuery").form-control.input-lg.text-center
+			.input-group
+				span.input-group-btn
+					button.btn.btn-default(type='button') Show mine
+				input(type='text',placeholder="Type to filter forms",ng-model="searchQuery").form-control.text-center
+	.row.row-between-20
 	.row
 		.col-sm-12
 			ul.list-group

@@ -7,6 +7,10 @@ body {
     padding-top: 5px;
 }
 
+.row-between-20{
+    height: 20px;
+}
+
 a.link-white,
 a.link-white:hover,
 a.link-white:focus,
