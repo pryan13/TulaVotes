@@ -1,7 +1,8 @@
 angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants'])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
-			//get list of forms
+			$scope.showMine = false;
+
 			$http.get('/api/forms')
 				.success(function (response) {
 					$scope.forms = response.data;
@@ -20,6 +21,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 					.error(function (response) {
 						console.log('Error: ' + response);
 					});
+			};
+
+			$scope.toggleMine = function(){
+				$scope.showMine = !$scope.showMine;
 			};
 		}
 	])
