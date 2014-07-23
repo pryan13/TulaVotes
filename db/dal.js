@@ -32,8 +32,11 @@ module.exports = function(config) {
 		}
 	};
 
-	var getList = function (onComplete) {
-		formDbObject.find().populate('createdBy', 'name').exec(function (err, forms) {
+	var getList = function (owner, onComplete) {
+		var query = owner
+			? formDbObject.find({createdBy: owner})
+			: formDbObject.find();
+		query.populate('createdBy', 'name').exec(function (err, forms) {
 			onComplete(err, forms);
 		});
 	};

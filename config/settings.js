@@ -11,6 +11,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
+			"vdanilov@tula.co",
 			"master@tula.co"
 		]
 	},
@@ -26,6 +27,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
+			"vdanilov@tula.co",
 			"master@tula.co"
 		]
 	},

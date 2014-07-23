@@ -5,7 +5,7 @@
 		.col-sm-8.col-sm-offset-2.text-center
 			.input-group
 				span.input-group-btn
-					button.btn(type='button',ng-class='{true: "btn-primary", false: "btn-default"}[showMine]',ng-click='toggleMine()') Show mine
+					button.btn.btn-default(type='button',ng-class='{true: "active"}[showMine]',ng-click='toggleMine()') Show mine
 				input(type='text',placeholder="Type to filter forms",ng-model="searchQuery").form-control.text-center
 	.row.row-between-20
 	.row

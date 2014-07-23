@@ -20,8 +20,12 @@ module.exports = function(dal) {
 		}
 	};
 
-	var getFormList = function (res) {
-		dal.getList(function (err, forms) {
+	var getFormList = function (req, res, owner) {
+		var ownerParam;
+		if(owner === 'mine')
+			ownerParam = req.session.user.id;
+		else ownerParam = owner;
+		dal.getList(ownerParam, function (err, forms) {
 			onRequestComplete(res, err, forms);
 		});
 	};
@@ -32,7 +36,10 @@ module.exports = function(dal) {
 				onSuccessCallback();
 				return;
 			}
-			res.json({success: true, data: data});
+			var response = {success: true};
+			if(data)
+				response.data = data;
+			res.json(response);
 		}
 		else {
 			console.log(err);
@@ -42,11 +49,21 @@ module.exports = function(dal) {
 
 //get list
 	router.get('/forms', auth, function (req, res) {
-		getFormList(res);
+		getFormList(req, res);
+	});
+
+//get list of mine forms
+	router.get('/forms/mine', auth, function (req, res) {
+		getFormList(req, res, 'mine');
+	});
+
+//get list of owner's forms
+	router.get('/forms/:ownerId', auth, function (req, res) {
+		getFormList(req, res, req.params.ownerId);
 	});
 
 //get details for edit
-	router.get('/forms/:formId', auth, function (req, res) {
+	router.get('/forms/edit/:formId', auth, function (req, res) {
 		dal.getForm(req.params.formId, function (err, form) {
 			onRequestComplete(res, err, form);
 		});
@@ -83,9 +100,7 @@ module.exports = function(dal) {
 //delete form
 	router.delete('/forms/:formId', auth, function (req, res) {
 		dal.deleteForm(req.params.formId, function (err) {
-			onRequestComplete(res, err, null, function () {
-				getFormList(res);
-			});
+			onRequestComplete(res, err, null);
 		})
 	});
 

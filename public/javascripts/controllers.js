@@ -2,16 +2,22 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
 			$scope.showMine = false;
-
-			$http.get('/api/forms')
-				.success(function (response) {
-					$scope.forms = response.data;
-				})
-				.error(function (response) {
-					console.log('Error: ' + response);
-				});
-
 			$scope.formData = {};
+
+			var refreshFormsList = function() {
+				var listUrl = $scope.showMine
+					? '/api/forms/mine'
+					: '/api/forms';
+				$http.get(listUrl)
+					.success(function (response) {
+						$scope.forms = response.data;
+					})
+					.error(function (response) {
+						console.log('Error: ' + response);
+					});
+			};
+
+			refreshFormsList();
 
 			$scope.deleteForm = function (id) {
 				$http.delete('/api/forms/' + id)
@@ -25,6 +31,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 
 			$scope.toggleMine = function(){
 				$scope.showMine = !$scope.showMine;
+				refreshFormsList();
 			};
 		}
 	])
