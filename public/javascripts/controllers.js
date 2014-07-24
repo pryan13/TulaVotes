@@ -22,7 +22,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.deleteForm = function (id) {
 				$http.delete('/api/forms/' + id)
 					.success(function (response) {
-						$scope.forms = response.data;
+						refreshFormsList();
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
@@ -80,15 +80,15 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			//$scope.formOptions = [];
 			if($scope.isNew){
 				$scope.formData = {formOptions: [], type: 'radio'};
-				$scope.formData.formOptions.push({text: "", checked: false});
+				$scope.formData.formOptions.push({text: ""});
 			}
 			
 			if (!$scope.isNew){
-				$http.get('/api/forms/' + $routeParams.formId)
+				$http.get('/api/forms/edit/' + $routeParams.formId)
 				.success(function (response) {
 					$scope.formData = response.data
 					if($scope.formData.formOptions.length == 0)
-						$scope.formData.formOptions.push({text: "", checked: false});
+						$scope.formData.formOptions.push({text: ""});
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
@@ -96,7 +96,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			}
 
 			$scope.addOption = function(){
-				$scope.formData.formOptions.push({text: "", checked: false});
+				$scope.formData.formOptions.push({text: ""});
 			};
 
 			$scope.deleteOption = function(optNum){

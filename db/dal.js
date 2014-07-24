@@ -32,11 +32,13 @@ module.exports = function(config) {
 		}
 	};
 
-	var getList = function (owner, onComplete) {
-		var query = owner
-			? formDbObject.find({createdBy: owner})
-			: formDbObject.find();
-		query.populate('createdBy', 'name').exec(function (err, forms) {
+	var getList = function (owner, activeOnly, onComplete) {
+		var qParam = {};
+		if(owner)
+			qParam.createdBy = owner;
+		if(activeOnly)
+			qParam.isActive = activeOnly;
+		formDbObject.find(qParam).populate('createdBy', 'name').exec(function (err, forms) {
 			onComplete(err, forms);
 		});
 	};
@@ -101,7 +103,7 @@ module.exports = function(config) {
 			name: data.formData.name,
 			description: data.formData.description,
 			type: data.formData.type,
-			isActive: data.formData.isActive,
+			isActive: !!data.formData.isActive,
 			formOptions: data.formData.formOptions,
 			createdBy: data.requestedBy
 		});

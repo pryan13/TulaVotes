@@ -21,21 +21,20 @@ module.exports = function(dal) {
 	};
 
 	var getFormList = function (req, res, owner) {
-		var ownerParam;
-		if(owner === 'mine')
+		var ownerParam,
+			getActiveOnly = true;
+		if(owner === 'mine') {
 			ownerParam = req.session.user.id;
+			getActiveOnly = false;
+		}
 		else ownerParam = owner;
-		dal.getList(ownerParam, function (err, forms) {
+		dal.getList(ownerParam, getActiveOnly, function (err, forms) {
 			onRequestComplete(res, err, forms);
 		});
 	};
 
-	var onRequestComplete = function (res, err, data, onSuccessCallback) {
+	var onRequestComplete = function (res, err, data) {
 		if (!err) {
-			if (onSuccessCallback) {
-				onSuccessCallback();
-				return;
-			}
 			var response = {success: true};
 			if(data)
 				response.data = data;
