@@ -24,7 +24,7 @@ module.exports.init = function(app){
 	});
 	app.post('/login', function(req, res) {
 		if(req.body.email){
-			dal.getOrCreateUser({email: req.body.email}, function(result){
+			dal.getOrCreateUser({email: req.body.email.trim()}, function(result){
 				if(result)
 					req.session.user = {id: result._id, name: result.name};
 				res.redirect('/');

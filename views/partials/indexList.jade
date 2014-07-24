@@ -1,21 +1,23 @@
 .container
-	.jumbotron.text-center
+	.page-header.text-center
 		h2 Forms you can vote
 	.row
 		.col-sm-8.col-sm-offset-2.text-center
-			form
-				p
-					input(type='text',placeholder="Type to filter forms",ng-model="searchQuery").form-control.input-lg.text-center
+			.input-group
+				span.input-group-btn
+					button.btn.btn-default(type='button',ng-class='{true: "active"}[showMine]',ng-click='toggleMine()') Show mine
+				input(type='text',placeholder="Type to filter forms",ng-model="searchQuery").form-control.text-center
+	.row.row-between-20
 	.row
 		.col-sm-12
 			ul.list-group
 				li.list-group-item(ng-repeat='form in forms | filter:searchQuery')
-					span.badge
+					span.badge(ng-if="form.isEditable",ng-click=('deleteForm(form._id)'))
+						a.link-white(href="#") delete
+					span.badge(ng-if="form.isEditable")
 						a.link-white(href='#/edit/{{form._id}}') edit
 					span.badge
 						a.link-white(href='#/view/{{form._id}}') vote
-					span.badge(ng-click=('deleteForm(form._id)'))
-						|delete
 					div
 						|{{form.name}}
 						br

@@ -1,19 +1,14 @@
 angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants'])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
-			//get list of forms
-			$http.get('/api/forms')
-				.success(function (response) {
-					$scope.forms = response.data;
-				})
-				.error(function (response) {
-					console.log('Error: ' + response);
-				});
-
+			$scope.showMine = false;
 			$scope.formData = {};
 
-			$scope.deleteForm = function (id) {
-				$http.delete('/api/forms/' + id)
+			var refreshFormsList = function() {
+				var listUrl = $scope.showMine
+					? '/api/forms/mine'
+					: '/api/forms';
+				$http.get(listUrl)
 					.success(function (response) {
 						$scope.forms = response.data;
 					})
@@ -21,10 +16,27 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						console.log('Error: ' + response);
 					});
 			};
+
+			refreshFormsList();
+
+			$scope.deleteForm = function (id) {
+				$http.delete('/api/forms/' + id)
+					.success(function (response) {
+						refreshFormsList();
+					})
+					.error(function (response) {
+						console.log('Error: ' + response);
+					});
+			};
+
+			$scope.toggleMine = function(){
+				$scope.showMine = !$scope.showMine;
+				refreshFormsList();
+			};
 		}
 	])
-	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', 'NotifyService', 'NOTIFICATION_TYPES',
-		function ($scope, $routeParams, $http, NotifyService, NOTIFICATION_TYPES) {
+	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
+		function ($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES) {
 			$scope.hasAlreadyVoted = false;
 					$http.get('/api/forms/view/' + $routeParams.formId)
 						.success(function (response) {
@@ -57,22 +69,26 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						console.log('Error: ' + response);
 					});
 			};
+
+			$scope.goBack = function(){
+				$location.url('/index');
+			}
 		}])
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
 			//$scope.formOptions = [];
 			if($scope.isNew){
-				$scope.formData = {formOptions: []};
-				$scope.formData.formOptions.push({text: "", checked: false});
+				$scope.formData = {formOptions: [], type: 'radio'};
+				$scope.formData.formOptions.push({text: ""});
 			}
 			
 			if (!$scope.isNew){
-				$http.get('/api/forms/' + $routeParams.formId)
+				$http.get('/api/forms/edit/' + $routeParams.formId)
 				.success(function (response) {
 					$scope.formData = response.data
 					if($scope.formData.formOptions.length == 0)
-						$scope.formData.formOptions.push({text: "", checked: false});
+						$scope.formData.formOptions.push({text: ""});
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
@@ -80,7 +96,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			}
 
 			$scope.addOption = function(){
-				$scope.formData.formOptions.push({text: "", checked: false});
+				$scope.formData.formOptions.push({text: ""});
 			};
 
 			$scope.deleteOption = function(optNum){

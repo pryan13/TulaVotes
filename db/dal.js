@@ -32,9 +32,19 @@ module.exports = function(config) {
 		}
 	};
 
-	var getList = function (onComplete) {
-		formDbObject.find().populate('createdBy', 'name').exec(function (err, forms) {
-			onComplete(err, forms);
+	var getList = function (data, /*requstedBy, owner, activeOnly,*/ onComplete) {
+		var qParam = {};
+		if(data.formOwner)
+			qParam.createdBy = data.formOwner;
+		if(data.getActiveOnly)
+			qParam.isActive = data.getActiveOnly;
+		formDbObject.find(qParam).populate('createdBy', 'name').exec(function (err, forms) {
+			var response = [];
+			for(var i = 0; i < forms.length; i++){
+				response[i] = forms[i].toJSON();
+				response[i].isEditable = forms[i].isEditableBy(data.requestedBy);
+			}
+			onComplete(err, response);
 		});
 	};
 
@@ -98,7 +108,7 @@ module.exports = function(config) {
 			name: data.formData.name,
 			description: data.formData.description,
 			type: data.formData.type,
-			isActive: data.formData.isActive,
+			isActive: !!data.formData.isActive,
 			formOptions: data.formData.formOptions,
 			createdBy: data.requestedBy
 		});

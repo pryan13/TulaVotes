@@ -5,19 +5,23 @@ module.exports = function(config) {
 
 	var userSchema = new mongoose.Schema({
 		name: {type: String, required: 'Field {PATH} is required!'},
-		email: {type: String, required: 'Field {PATH} is required!'}
+		email: {type: String, required: 'Field {PATH} is required!', unique: true}
 	});
+
+	userSchema.path('email').validate(function(email){
+		return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(email);
+	}, 'The email provided has wrong format!');
 
 	var User = mongoose.model("User", userSchema);
 
 	var formSchema = new mongoose.Schema({
-		name: {type: String, required: 'Field {PATH} is required!'},
-		description: {type: String, required: 'Field {PATH} is required!'},
+		name: {type: String, trim: true, required: 'Form name is required!'},
+		description: {type: String, trim: true, required: 'Form description is required!'},
 		type: { type: String, enum: ['radio', 'checkbox'], default: 'radio' },
 		isActive: {type: Boolean, default: false},
 		formOptions: {
 			type: [{
-				text: {type: String, required: 'Field {PATH} is required!'},
+				text: {type: String, trim: true, required: 'Option text is required!'},
 				votes: {
 					type: [{
 						votedBy: {type: mongoose.Schema.Types.ObjectId, required: true},
@@ -25,11 +29,15 @@ module.exports = function(config) {
 					}]
 				}
 			}],
-			required: 'Field {PATH} is required!'
+			required: 'Form should contain at least one option!'
 		},
 		createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 		createdAt: {type: Date, default: Date.now}
 	});
+
+	formSchema.methods.isEditableBy = function(editorId){
+		return this.populated('createdBy').toString() === editorId;
+	};
 
 	var Form = mongoose.model('Form', formSchema);
 
