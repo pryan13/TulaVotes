@@ -21,14 +21,13 @@ module.exports = function(dal) {
 	};
 
 	var getFormList = function (req, res, owner) {
-		var ownerParam,
-			getActiveOnly = true;
-		if(owner === 'mine') {
-			ownerParam = req.session.user.id;
-			getActiveOnly = false;
-		}
-		else ownerParam = owner;
-		dal.getList(ownerParam, getActiveOnly, function (err, forms) {
+		var isMine = owner === 'mine',
+			reqData = {
+				requestedBy: req.session.user.id,
+				getActiveOnly: !isMine, //get only active forms if not mine and all forms otherwise
+				formOwner: isMine ? req.session.user.id : owner
+			};
+		dal.getList(reqData, function (err, forms) {
 			onRequestComplete(res, err, forms);
 		});
 	};

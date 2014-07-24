@@ -32,14 +32,19 @@ module.exports = function(config) {
 		}
 	};
 
-	var getList = function (owner, activeOnly, onComplete) {
+	var getList = function (data, /*requstedBy, owner, activeOnly,*/ onComplete) {
 		var qParam = {};
-		if(owner)
-			qParam.createdBy = owner;
-		if(activeOnly)
-			qParam.isActive = activeOnly;
+		if(data.formOwner)
+			qParam.createdBy = data.formOwner;
+		if(data.getActiveOnly)
+			qParam.isActive = data.getActiveOnly;
 		formDbObject.find(qParam).populate('createdBy', 'name').exec(function (err, forms) {
-			onComplete(err, forms);
+			var response = [];
+			for(var i = 0; i < forms.length; i++){
+				response[i] = forms[i].toJSON();
+				response[i].isEditable = forms[i].isEditableBy(data.requestedBy);
+			}
+			onComplete(err, response);
 		});
 	};
 

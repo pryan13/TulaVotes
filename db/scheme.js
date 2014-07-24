@@ -35,6 +35,10 @@ module.exports = function(config) {
 		createdAt: {type: Date, default: Date.now}
 	});
 
+	formSchema.methods.isEditableBy = function(editorId){
+		return this.populated('createdBy').toString() === editorId;
+	};
+
 	var Form = mongoose.model('Form', formSchema);
 
 	return {
