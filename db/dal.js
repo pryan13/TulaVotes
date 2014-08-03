@@ -84,6 +84,32 @@ module.exports = function(config) {
 		});
 	};
 
+	var getFormStat = function (data, onComplete) {
+		formDbObject.findOne({_id: data.formId}).populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
+			var result = {
+				_id: form._id,
+				name: form.name,
+				description: form.description,
+				createdBy: form.createdBy.name,
+				createdAt: form.createdAt,
+				formOptions: []
+			};
+			for(var i = 0; i < form.formOptions.length; i++){
+//				var hasAlreadyVoted = false;
+				var votes = [];
+				for(var j = 0; j < form.formOptions[i].votes.length; j++){
+//					if(form.formOptions[i].votes[j].votedBy.toString() !== data.requestedBy)
+//						continue;
+//					hasAlreadyVoted = true;
+//					break;
+					votes.push(form.formOptions[i].votes[j].votedBy.name);
+				}
+				result.formOptions.push(votes);
+			}
+			onComplete(err, result);
+		});
+	};
+
 	var voteOnForm = function (data, onComplete) {
 		formDbObject.findById(data.voteData.formId, function (err, form) {
 			for (var j = 0; j < form.formOptions.length; j++) {
@@ -145,6 +171,7 @@ module.exports = function(config) {
 		getList: getList,
 		getForm: getForm,
 		getFormView: getFormView,
+		getFormStat: getFormStat,
 		voteOnForm: voteOnForm,
 		createForm: createForm,
 		updateForm: updateForm,

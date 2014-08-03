@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants'])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart'])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
 			$scope.showMine = false;
@@ -70,6 +70,63 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 					});
 			};
 
+			$scope.goBack = function(){
+				$location.url('/index');
+			}
+		}])
+	.controller('statFormCtrl', ['$scope', '$routeParams', '$http', '$location',
+		function ($scope, $routeParams, $http, $location) {
+			$scope.chartObj;
+			$http.get('/api/forms/stat/' + $routeParams.formId)
+				.success(function (response) {
+					$scope.formData = response.data;
+					$scope.basicAreaChart = {
+						chart: {
+							plotBackgroundColor: null,
+							plotBorderWidth: null,
+							plotShadow: false
+						},
+						title: {
+							text: 'Browser market shares at a specific website, 2014'
+						},
+						tooltip: {
+							pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+						},
+						plotOptions: {
+							pie: {
+								allowPointSelect: true,
+								cursor: 'pointer',
+								dataLabels: {
+									enabled: false
+								},
+								showInLegend: true
+							}
+						},
+						series: [{
+							type: 'pie',
+							name: 'Browser share',
+							data: [
+								['Firefox',   45.0],
+								['IE',       26.8],
+								{
+									name: 'Chrome',
+									y: 12.8,
+									sliced: true,
+									selected: true
+								},
+								['Safari',    8.5],
+								['Opera',     6.2],
+								['Others',   0.7]
+							]
+						}]
+					};
+//					angular.forEach($scope.formData.formOptions, function(fOpt) {
+//						$scope.hasAlreadyVoted = $scope.hasAlreadyVoted || fOpt.checked;
+//					});
+				})
+				.error(function (response) {
+					console.log('Error: ' + response);
+				});
 			$scope.goBack = function(){
 				$location.url('/index');
 			}

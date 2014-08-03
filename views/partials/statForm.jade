@@ -1,0 +1,19 @@
+.container
+	.row
+		.col-sm-6.text-left
+			i {{formData.createdBy}}
+			| &nbsp;create at&nbsp;
+			i {{formData.createdAt | date: 'H:mm MM/dd/yyyy'}}
+	.row
+		.col-sm-6.text-left
+			h3 {{formData.name}}
+	.row
+		.col-sm-6.text-left
+			p {{formData.description}}
+	div.row
+		.col-sm-6.text-left
+			chart(value='basicAreaChart',type="pie",height="400",chart-obj='chartObj')
+	.row
+		.col-sm-6.text-left
+			.btn-group
+				button(class="btn btn-default", ng-click='goBack()') Back
