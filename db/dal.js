@@ -49,7 +49,7 @@ module.exports = function(config) {
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findOne({_id: id}).populate('createdBy').exec(function (err, form) {
+		formDbObject.findOne({_id: id}).exec(function (err, form) {
 			onComplete(err, form);
 		});
 	};
