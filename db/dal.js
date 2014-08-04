@@ -85,7 +85,7 @@ module.exports = function(config) {
 	};
 
 	var getFormStat = function (data, onComplete) {
-		formDbObject.findOne({_id: data.formId}).populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
+		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
 			var result = {
 				_id: form._id,
 				name: form.name,
