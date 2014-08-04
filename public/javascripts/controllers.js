@@ -80,17 +80,17 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$http.get('/api/forms/stat/' + $routeParams.formId)
 				.success(function (response) {
 					$scope.formData = response.data;
-					$scope.basicAreaChart = {
+					$scope.chartData = {
 						chart: {
 							plotBackgroundColor: null,
 							plotBorderWidth: null,
 							plotShadow: false
 						},
 						title: {
-							text: 'Browser market shares at a specific website, 2014'
+							text: ''
 						},
 						tooltip: {
-							pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+							pointFormat: '<b>{point.y} votes</b><br/><b>{point.percentage:.1f}%</b>'
 						},
 						plotOptions: {
 							pie: {
@@ -102,27 +102,17 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 								showInLegend: true
 							}
 						},
-						series: [{
-							type: 'pie',
-							name: 'Browser share',
-							data: [
-								['Firefox',   45.0],
-								['IE',       26.8],
-								{
-									name: 'Chrome',
-									y: 12.8,
-									sliced: true,
-									selected: true
-								},
-								['Safari',    8.5],
-								['Opera',     6.2],
-								['Others',   0.7]
-							]
-						}]
+                        legend: {
+                            layout: 'vertical'
+                        },
+                        series: [{
+                            type: 'pie',
+                            data: []
+                        }]
 					};
-//					angular.forEach($scope.formData.formOptions, function(fOpt) {
-//						$scope.hasAlreadyVoted = $scope.hasAlreadyVoted || fOpt.checked;
-//					});
+					angular.forEach($scope.formData.formOptions, function(fOpt) {
+                        $scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
+					});
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);

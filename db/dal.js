@@ -95,16 +95,7 @@ module.exports = function(config) {
 				formOptions: []
 			};
 			for(var i = 0; i < form.formOptions.length; i++){
-//				var hasAlreadyVoted = false;
-				var votes = [];
-				for(var j = 0; j < form.formOptions[i].votes.length; j++){
-//					if(form.formOptions[i].votes[j].votedBy.toString() !== data.requestedBy)
-//						continue;
-//					hasAlreadyVoted = true;
-//					break;
-					votes.push(form.formOptions[i].votes[j].votedBy.name);
-				}
-				result.formOptions.push(votes);
+				result.formOptions.push({text: form.formOptions[i].text, votesCount: form.formOptions[i].votes.length});
 			}
 			onComplete(err, result);
 		});
