@@ -33,3 +33,4 @@
 					button(ng-if="isNew", class="btn btn-default", ng-click='createForm(formData)') Create
 					button(ng-if="!isNew", class="btn btn-default", ng-click='updateForm(formData)') Save
 					button(class="btn btn-default", ng-click='goBack()') Back
+					button(ng-if="!isNew", class="btn btn-default", ng-click='duplicateForm(formData)') Duplicate

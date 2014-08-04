@@ -102,16 +102,18 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 								showInLegend: true
 							}
 						},
-                        legend: {
-                            layout: 'vertical'
-                        },
-                        series: [{
-                            type: 'pie',
-                            data: []
-                        }]
+						legend: {
+							layout: 'vertical'
+						},
+						series: [
+							{
+								type: 'pie',
+								data: []
+							}
+						]
 					};
-					angular.forEach($scope.formData.formOptions, function(fOpt) {
-                        $scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
+					angular.forEach($scope.formData.formOptions, function (fOpt) {
+						$scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
 					});
 				})
 				.error(function (response) {
@@ -149,8 +151,8 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.deleteOption = function(optNum){
 				$scope.formData.formOptions.splice(optNum, 1);
 			};
-			
-			$scope.createForm = function (newForm) {
+
+			var createForm = function (newForm) {
 				$http.post('/api/forms', newForm)
 					.success(function (response) {
 						if (response.success) {
@@ -166,6 +168,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						NotifyService.notify({type: NOTIFICATION_TYPES.error, message: response.error});
 						console.log('Error: ' + response);
 					});
+			};
+			
+			$scope.createForm = function (newForm) {
+				createForm(newForm);
 			};
 
 			$scope.updateForm = function (existingForm) {
@@ -183,6 +189,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						NotifyService.notify({type: NOTIFICATION_TYPES.error, message: response.error});
 						console.log('Error: ' + response);
 					});
+			};
+
+			$scope.duplicateForm = function (existingForm) {
+				createForm(existingForm);
 			};
 
 			$scope.goBack = function(){

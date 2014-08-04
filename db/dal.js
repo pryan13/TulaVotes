@@ -32,7 +32,7 @@ module.exports = function(config) {
 		}
 	};
 
-	var getList = function (data, /*requstedBy, owner, activeOnly,*/ onComplete) {
+	var getList = function (data, onComplete) {
 		var qParam = {};
 		if(data.formOwner)
 			qParam.createdBy = data.formOwner;
@@ -49,8 +49,9 @@ module.exports = function(config) {
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findOne({_id: id}).exec(function (err, form) {
-			onComplete(err, form);
+		formDbObject.findOne({_id: id}).select('-formOptions.votes').exec(function (err, form) {
+			var response = form.toJSON();
+			onComplete(err, response);
 		});
 	};
 
