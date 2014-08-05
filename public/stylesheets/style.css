@@ -1,20 +1,24 @@
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-.notify-area{
-    height: 60px;
-    padding-top: 5px;
+.notify-area {
+	height: 60px;
+	padding-top: 5px;
 }
 
-.row-between-20{
-    height: 20px;
+.row-between-20 {
+	height: 20px;
+}
+
+.form-list-item {
+	cursor: pointer;
 }
 
 a.link-white,
 a.link-white:hover,
 a.link-white:focus,
-a.link-white:active{
-    color: #fff;
-    text-decoration: none;
+a.link-white:active {
+	color: #fff;
+	text-decoration: none;
 }

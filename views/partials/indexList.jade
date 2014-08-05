@@ -11,13 +11,11 @@
 	.row
 		.col-sm-12
 			ul.list-group
-				li.list-group-item(ng-repeat='form in forms | filter:searchQuery')
+				li.list-group-item.form-list-item(ng-repeat='form in forms | filter:searchQuery',ng-click="goVote(form._id)")
 					span.badge(ng-if="form.isEditable",ng-click=('deleteForm(form._id)'))
 						a.link-white(href="#") delete
 					span.badge(ng-if="form.isEditable")
 						a.link-white(href='#/edit/{{form._id}}') edit
-					span.badge
-						a.link-white(href='#/view/{{form._id}}') vote
 					span.badge
 						a.link-white(href='#/formstat/{{form._id}}') stats
 					div

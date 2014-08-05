@@ -1,6 +1,6 @@
 angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart'])
-	.controller('indexListCtrl', ['$scope', '$http',
-		function ($scope, $http) {
+	.controller('indexListCtrl', ['$scope', '$http', '$location',
+		function ($scope, $http, $location) {
 			$scope.showMine = false;
 			$scope.formData = {};
 
@@ -33,6 +33,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				$scope.showMine = !$scope.showMine;
 				refreshFormsList();
 			};
+
+			$scope.goVote = function(formId){
+				$location.url('/view/' + formId);
+			}
 		}
 	])
 	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
