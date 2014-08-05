@@ -11,7 +11,7 @@
 	.row
 		.col-sm-12
 			ul.list-group
-				li.list-group-item.form-list-item(ng-repeat='form in forms | filter:searchQuery',ng-click="goVote(form._id)")
+				li.list-group-item(ng-repeat='form in forms | filter:searchQuery',ng-class='{true: "form-active", false: "form-inactive"}[form.isActive]')
 					span.badge(ng-if="form.isEditable",ng-click=('deleteForm(form._id)'))
 						a.link-white(href="#") delete
 					span.badge(ng-if="form.isEditable")
@@ -19,8 +19,9 @@
 					span.badge
 						a.link-white(href='#/formstat/{{form._id}}') stats
 					div
-						|{{form.name}}
+						span.form-name(ng-click='goVote(form._id)',ng-class='{true: "success", false: "error"}[form.isActive]')
+							b {{form.name}}
 						br
 						i {{form.createdBy.name}}
 						| &nbsp;create at&nbsp;
-						i {{form.createdAt | date: 'H:mm MM/dd/yyyy'}}
+						i {{form.createdAt | date: 'H:mm:ss MM/dd/yyyy'}}

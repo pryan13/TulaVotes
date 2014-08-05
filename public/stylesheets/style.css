@@ -11,8 +11,24 @@ body {
 	height: 20px;
 }
 
-.form-list-item {
+.list-group-item .form-name {
 	cursor: pointer;
+}
+
+.form-active:hover{
+	background-color: #d0e9c6;
+}
+
+.success{
+	color: #3c763d;
+}
+
+.form-inactive:hover{
+	background-color: #ebcccc;
+}
+
+.error{
+	color: #a94442;
 }
 
 a.link-white,
