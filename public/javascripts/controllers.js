@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants'])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart'])
 	.controller('indexListCtrl', ['$scope', '$http',
 		function ($scope, $http) {
 			$scope.showMine = false;
@@ -74,6 +74,55 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				$location.url('/index');
 			}
 		}])
+	.controller('statFormCtrl', ['$scope', '$routeParams', '$http', '$location',
+		function ($scope, $routeParams, $http, $location) {
+			$scope.chartObj;
+			$http.get('/api/forms/stat/' + $routeParams.formId)
+				.success(function (response) {
+					$scope.formData = response.data;
+					$scope.chartData = {
+						chart: {
+							plotBackgroundColor: null,
+							plotBorderWidth: null,
+							plotShadow: false
+						},
+						title: {
+							text: ''
+						},
+						tooltip: {
+							pointFormat: '<b>{point.y} votes</b><br/><b>{point.percentage:.1f}%</b>'
+						},
+						plotOptions: {
+							pie: {
+								allowPointSelect: true,
+								cursor: 'pointer',
+								dataLabels: {
+									enabled: false
+								},
+								showInLegend: true
+							}
+						},
+						legend: {
+							layout: 'vertical'
+						},
+						series: [
+							{
+								type: 'pie',
+								data: []
+							}
+						]
+					};
+					angular.forEach($scope.formData.formOptions, function (fOpt) {
+						$scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
+					});
+				})
+				.error(function (response) {
+					console.log('Error: ' + response);
+				});
+			$scope.goBack = function(){
+				$location.url('/index');
+			}
+		}])
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
@@ -102,8 +151,8 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.deleteOption = function(optNum){
 				$scope.formData.formOptions.splice(optNum, 1);
 			};
-			
-			$scope.createForm = function (newForm) {
+
+			var createForm = function (newForm) {
 				$http.post('/api/forms', newForm)
 					.success(function (response) {
 						if (response.success) {
@@ -119,6 +168,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						NotifyService.notify({type: NOTIFICATION_TYPES.error, message: response.error});
 						console.log('Error: ' + response);
 					});
+			};
+			
+			$scope.createForm = function (newForm) {
+				createForm(newForm);
 			};
 
 			$scope.updateForm = function (existingForm) {
@@ -136,6 +189,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						NotifyService.notify({type: NOTIFICATION_TYPES.error, message: response.error});
 						console.log('Error: ' + response);
 					});
+			};
+
+			$scope.duplicateForm = function (existingForm) {
+				createForm(existingForm);
 			};
 
 			$scope.goBack = function(){

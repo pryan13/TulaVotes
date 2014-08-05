@@ -32,7 +32,7 @@ module.exports = function(config) {
 		}
 	};
 
-	var getList = function (data, /*requstedBy, owner, activeOnly,*/ onComplete) {
+	var getList = function (data, onComplete) {
 		var qParam = {};
 		if(data.formOwner)
 			qParam.createdBy = data.formOwner;
@@ -49,8 +49,9 @@ module.exports = function(config) {
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findOne({_id: id}).populate('createdBy').exec(function (err, form) {
-			onComplete(err, form);
+		formDbObject.findOne({_id: id}).select('-formOptions.votes').exec(function (err, form) {
+			var response = form.toJSON();
+			onComplete(err, response);
 		});
 	};
 
@@ -79,6 +80,23 @@ module.exports = function(config) {
 					text: form.formOptions[i].text,
 					checked: hasAlreadyVoted
 				});
+			}
+			onComplete(err, result);
+		});
+	};
+
+	var getFormStat = function (data, onComplete) {
+		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
+			var result = {
+				_id: form._id,
+				name: form.name,
+				description: form.description,
+				createdBy: form.createdBy.name,
+				createdAt: form.createdAt,
+				formOptions: []
+			};
+			for(var i = 0; i < form.formOptions.length; i++){
+				result.formOptions.push({text: form.formOptions[i].text, votesCount: form.formOptions[i].votes.length});
 			}
 			onComplete(err, result);
 		});
@@ -145,6 +163,7 @@ module.exports = function(config) {
 		getList: getList,
 		getForm: getForm,
 		getFormView: getFormView,
+		getFormStat: getFormStat,
 		voteOnForm: voteOnForm,
 		createForm: createForm,
 		updateForm: updateForm,

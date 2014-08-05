@@ -24,7 +24,7 @@ module.exports = function(config) {
 				text: {type: String, trim: true, required: 'Option text is required!'},
 				votes: {
 					type: [{
-						votedBy: {type: mongoose.Schema.Types.ObjectId, required: true},
+						votedBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 						votedAt: {type: Date, default: Date.now}
 					}]
 				}
