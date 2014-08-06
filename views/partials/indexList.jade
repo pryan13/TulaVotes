@@ -16,8 +16,6 @@
 						a.link-white(href="#") delete
 					span.badge(ng-if="form.isEditable")
 						a.link-white(href='#/edit/{{form._id}}') edit
-					span.badge
-						a.link-white(href='#/formstat/{{form._id}}') stats
 					div
 						span.form-name(ng-click='goVote(form._id)',ng-class='{true: "success", false: "error"}[form.isActive]')
 							b {{form.name}}

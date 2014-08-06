@@ -74,12 +74,6 @@ module.exports = function(dal) {
 		});
 	});
 
-	router.get('/forms/stat/:formId', auth, function (req, res) {
-		dal.getFormStat({formId: req.params.formId, requestedBy: req.session.user.id}, function (err, form) {
-			onRequestComplete(res, err, form);
-		});
-	});
-
 //save vote
 	router.post('/forms/vote', auth, function (req, res) {
 		dal.voteOnForm({voteData: req.body, requestedBy: req.session.user.id}, function (err, form) {

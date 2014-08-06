@@ -55,6 +55,30 @@ module.exports = function(config) {
 		});
 	};
 
+	var viewFormOptions = function (formOptions, requestedBy) {
+		var hasAlreadyVotedOnForm = false,
+			viewFormOptions =[];
+		for (var i = 0; i < formOptions.length; i++) {
+			var hasAlreadyVoted = false;
+			for (var j = 0; j < formOptions[i].votes.length; j++) {
+				if (formOptions[i].votes[j].votedBy.toString() !== requestedBy)
+					continue;
+				hasAlreadyVotedOnForm = hasAlreadyVoted = true;
+				break;
+			}
+			viewFormOptions.push({
+				_id: formOptions[i]._id,
+				text: formOptions[i].text,
+				checked: hasAlreadyVoted,
+				votesCount: formOptions[i].votes.length
+			});
+		}
+		return {
+			hasAlreadyVoted: hasAlreadyVotedOnForm,
+			formOptions: viewFormOptions
+		}
+	};
+
 	var getFormView = function (data, onComplete) {
 		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').exec(function (err, form) {
 			var result = {
@@ -63,41 +87,11 @@ module.exports = function(config) {
 				description: form.description,
 				createdBy: form.createdBy.name,
 				createdAt: form.createdAt,
-				type: form.type,
-				formOptions: [],
-				hasAlreadyVoted: false
+				type: form.type
 			};
-			for(var i = 0; i < form.formOptions.length; i++){
-				var hasAlreadyVoted = false;
-				for(var j = 0; j < form.formOptions[i].votes.length; j++){
-					if(form.formOptions[i].votes[j].votedBy.toString() !== data.requestedBy)
-						continue;
-					hasAlreadyVoted = true;
-					break;
-				}
-				result.formOptions.push({
-					_id: form.formOptions[i]._id,
-					text: form.formOptions[i].text,
-					checked: hasAlreadyVoted
-				});
-			}
-			onComplete(err, result);
-		});
-	};
-
-	var getFormStat = function (data, onComplete) {
-		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
-			var result = {
-				_id: form._id,
-				name: form.name,
-				description: form.description,
-				createdBy: form.createdBy.name,
-				createdAt: form.createdAt,
-				formOptions: []
-			};
-			for(var i = 0; i < form.formOptions.length; i++){
-				result.formOptions.push({text: form.formOptions[i].text, votesCount: form.formOptions[i].votes.length});
-			}
+			var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
+			result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
+			result.formOptions = resOptions.formOptions;
 			onComplete(err, result);
 		});
 	};
@@ -105,9 +99,6 @@ module.exports = function(config) {
 	var voteOnForm = function (data, onComplete) {
 		formDbObject.findById(data.voteData.formId, function (err, form) {
 			for (var j = 0; j < form.formOptions.length; j++) {
-				var requesterVotePos = form.formOptions[j].votes.indexOf(data.requestedBy);
-				if(requesterVotePos >= 0)
-					form.formOptions[j].votes.splice(requesterVotePos, 1);
 				for(var i = 0; i < data.voteData.selectedOptions.length; i++) {
 					if (form.formOptions[j]._id != data.voteData.selectedOptions[i])
 						continue;
@@ -116,7 +107,8 @@ module.exports = function(config) {
 				}
 			}
 			form.save(function (err, form) {
-				onComplete(err, form);
+				var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
+				onComplete(err, resOptions.formOptions);
 			});
 		});
 	};
@@ -163,7 +155,6 @@ module.exports = function(config) {
 		getList: getList,
 		getForm: getForm,
 		getFormView: getFormView,
-		getFormStat: getFormStat,
 		voteOnForm: voteOnForm,
 		createForm: createForm,
 		updateForm: updateForm,
