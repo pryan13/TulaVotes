@@ -11,8 +11,14 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
+			"master@tula.co",
 			"vdanilov@tula.co",
-			"master@tula.co"
+			"aandrushkevich@tula.co",
+			"ashakh@tula.co",
+			"sseviaryn@tula.co",
+			"mchernyavsky@tula.co",
+			"skorotki@tula.co",
+			"pyermalovich@tula.co"
 		]
 	},
 	test: {

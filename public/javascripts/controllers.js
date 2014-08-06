@@ -1,6 +1,6 @@
 angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart'])
-	.controller('indexListCtrl', ['$scope', '$http',
-		function ($scope, $http) {
+	.controller('indexListCtrl', ['$scope', '$http', '$location',
+		function ($scope, $http, $location) {
 			$scope.showMine = false;
 			$scope.formData = {};
 
@@ -33,31 +33,71 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				$scope.showMine = !$scope.showMine;
 				refreshFormsList();
 			};
+
+			$scope.goVote = function(formId){
+				$location.url('/view/' + formId);
+			}
 		}
 	])
 	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function ($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES) {
-			$scope.hasAlreadyVoted = false;
-					$http.get('/api/forms/view/' + $routeParams.formId)
-						.success(function (response) {
+			$scope.chartObj;
+			var initChart = function(data){
+				$scope.chartData = {
+					chart: {
+						plotBackgroundColor: null,
+						plotBorderWidth: null,
+						plotShadow: false
+					},
+					title: {
+						text: ''
+					},
+					tooltip: {
+						pointFormat: '<b>{point.y} votes</b><br/><b>{point.percentage:.1f}%</b>'
+					},
+					plotOptions: {
+						pie: {
+							allowPointSelect: true,
+							cursor: 'pointer',
+							dataLabels: {
+								enabled: false
+							},
+							showInLegend: true
+						}
+					},
+					legend: {
+						layout: 'vertical'
+					},
+					series: [
+						{
+							type: 'pie',
+							data: []
+						}
+					]
+				};
+				angular.forEach(data, function (fOpt) {
+					$scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
+				});
+			};
+			$http.get('/api/forms/view/' + $routeParams.formId)
+				.success(function (response) {
 					$scope.formData = response.data;
-					angular.forEach($scope.formData.formOptions, function(fOpt) {
-						$scope.hasAlreadyVoted = $scope.hasAlreadyVoted || fOpt.checked;
-					});
+					initChart($scope.formData.formOptions);
 				})
 				.error(function (response) {
 					console.log('Error: ' + response);
 				});
 			$scope.vote = function(data){
 				var voteData = {formId: data._id, selectedOptions: []};
-				var vd = angular.forEach(data.formOptions, function(item){
+				angular.forEach(data.formOptions, function(item){
 					if(item.checked)
 						voteData.selectedOptions.push(item._id);
 				});
 				$http.post('/api/forms/vote', voteData)
 					.success(function (response) {
 						if (response.success) {
-							$scope.hasAlreadyVoted = true;
+							initChart(response.data);
+							$scope.formData.hasAlreadyVoted = true;
 							NotifyService.notify({type: NOTIFICATION_TYPES.success});
 						}
 						else {
@@ -69,56 +109,6 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						console.log('Error: ' + response);
 					});
 			};
-
-			$scope.goBack = function(){
-				$location.url('/index');
-			}
-		}])
-	.controller('statFormCtrl', ['$scope', '$routeParams', '$http', '$location',
-		function ($scope, $routeParams, $http, $location) {
-			$scope.chartObj;
-			$http.get('/api/forms/stat/' + $routeParams.formId)
-				.success(function (response) {
-					$scope.formData = response.data;
-					$scope.chartData = {
-						chart: {
-							plotBackgroundColor: null,
-							plotBorderWidth: null,
-							plotShadow: false
-						},
-						title: {
-							text: ''
-						},
-						tooltip: {
-							pointFormat: '<b>{point.y} votes</b><br/><b>{point.percentage:.1f}%</b>'
-						},
-						plotOptions: {
-							pie: {
-								allowPointSelect: true,
-								cursor: 'pointer',
-								dataLabels: {
-									enabled: false
-								},
-								showInLegend: true
-							}
-						},
-						legend: {
-							layout: 'vertical'
-						},
-						series: [
-							{
-								type: 'pie',
-								data: []
-							}
-						]
-					};
-					angular.forEach($scope.formData.formOptions, function (fOpt) {
-						$scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
-					});
-				})
-				.error(function (response) {
-					console.log('Error: ' + response);
-				});
 			$scope.goBack = function(){
 				$location.url('/index');
 			}

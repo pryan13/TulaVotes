@@ -1,20 +1,40 @@
 body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-.notify-area{
-    height: 60px;
-    padding-top: 5px;
+.notify-area {
+	height: 60px;
+	padding-top: 5px;
 }
 
-.row-between-20{
-    height: 20px;
+.row-between-20 {
+	height: 20px;
+}
+
+.list-group-item .form-name {
+	cursor: pointer;
+}
+
+.form-active:hover{
+	background-color: #d0e9c6;
+}
+
+.success{
+	color: #3c763d;
+}
+
+.form-inactive:hover{
+	background-color: #ebcccc;
+}
+
+.error{
+	color: #a94442;
 }
 
 a.link-white,
 a.link-white:hover,
 a.link-white:focus,
-a.link-white:active{
-    color: #fff;
-    text-decoration: none;
+a.link-white:active {
+	color: #fff;
+	text-decoration: none;
 }
