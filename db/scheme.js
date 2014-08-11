@@ -32,7 +32,8 @@ module.exports = function(config) {
 			required: 'Form should contain at least one option!'
 		},
 		createdBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-		createdAt: {type: Date, default: Date.now}
+		createdAt: {type: Date, default: Date.now},
+		expireAt: {type: Date}
 	});
 
 	formSchema.methods.isEditableBy = function(editorId){
