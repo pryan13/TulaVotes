@@ -120,7 +120,8 @@ module.exports = function(config) {
 			type: data.formData.type,
 			isActive: !!data.formData.isActive,
 			formOptions: data.formData.formOptions,
-			createdBy: data.requestedBy
+			createdBy: data.requestedBy,
+			expireAt: data.formData.expireAt
 		});
 		item.save(function (err, form) {
 			onComplete(err, form);
@@ -133,6 +134,7 @@ module.exports = function(config) {
 			form.description = data.description;
 			form.type = data.type;
 			form.isActive = data.isActive;
+			form.expireAt = data.expireAt;
 			form.formOptions = data.formOptions;
 			form.save(function (err, form) {
 				onComplete(err, form);

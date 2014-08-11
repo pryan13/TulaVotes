@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart'])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart', 'tulaVotes.formatInput'])
 	.controller('indexListCtrl', ['$scope', '$http', '$location',
 		function ($scope, $http, $location) {
 			$scope.showMine = false;
@@ -125,7 +125,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			if (!$scope.isNew){
 				$http.get('/api/forms/edit/' + $routeParams.formId)
 				.success(function (response) {
-					$scope.formData = response.data
+					$scope.formData = response.data;
 					if($scope.formData.formOptions.length == 0)
 						$scope.formData.formOptions.push({text: ""});
 				})
