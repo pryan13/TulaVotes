@@ -42,8 +42,15 @@ module.exports = function(config) {
 
 	var Form = mongoose.model('Form', formSchema);
 
+	var tagSchema = new mongoose.Schema({
+		name: {type: String, trim: true, required: 'Tag name is required!'}
+	});
+
+	var Tag = mongoose.model('Tag', tagSchema);
+
 	return {
 		userObject: User,
-		formObject: Form
+		formObject: Form,
+		tagObject: Tag
 	};
 };

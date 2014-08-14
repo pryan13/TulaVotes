@@ -3,10 +3,12 @@
 		.form-group
 			label(for='name') Name
 			input.form-control(ng-model='formData.name', type='text', id="name", placeholder="Enter name")
-	
 		.form-group
 			label(for='decription') Description
 			textarea.form-control(ng-model='formData.description', id="decription", rows="3", placeholder="Enter description")
+		.form-group
+			label Tags
+			textarea.form-control
 		.form-group
 			label(for="type") Type
 			select.form-control(ng-model='formData.type', id="type")
