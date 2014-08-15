@@ -8,7 +8,9 @@
 			textarea.form-control(ng-model='formData.description', id="decription", rows="3", placeholder="Enter description")
 		.form-group
 			label Tags
-			textarea.form-control
+			input.form-control(type="text",id="tagSelector",completetext="",items="formData.tags")
+			div
+				span.badge(ng-repeat="tag in formData.tags") {{tag}}
 		.form-group
 			label(for="type") Type
 			select.form-control(ng-model='formData.type', id="type")
