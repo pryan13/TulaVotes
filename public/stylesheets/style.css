@@ -48,3 +48,9 @@ a.link-white:active {
 	color: #fff;
 	text-decoration: none;
 }
+
+.remove-item{
+	position: absolute;
+	right: 2px;
+	top: -8px;
+}

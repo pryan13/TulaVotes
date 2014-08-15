@@ -87,7 +87,8 @@ module.exports = function(config) {
 				description: form.description,
 				createdBy: form.createdBy.name,
 				createdAt: form.createdAt,
-				type: form.type
+				type: form.type,
+				addOptionOnVote: form.addOptionOnVote
 			};
 			var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
 			result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
@@ -105,6 +106,12 @@ module.exports = function(config) {
 					form.formOptions[j].votes.push({votedBy: data.requestedBy});
 					break;
 				}
+			}
+			if(data.voteData.newOption){
+				form.formOptions.push({
+					text: data.voteData.newOption,
+					votes: [{votedBy: data.requestedBy}]
+				});
 			}
 			form.save(function (err, form) {
 				var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
@@ -136,6 +143,7 @@ module.exports = function(config) {
 			form.isActive = data.isActive;
 			form.expireAt = data.expireAt;
 			form.formOptions = data.formOptions;
+			form.addOptionOnVote = data.addOptionOnVote;
 			form.save(function (err, form) {
 				onComplete(err, form);
 			});

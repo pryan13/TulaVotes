@@ -6,22 +6,25 @@
 		.form-group
 			label(for='decription') Description
 			textarea.form-control(ng-model='formData.description', id="decription", rows="3", placeholder="Enter description")
-		.form-group
-			label Tags
-			input.form-control(type="text",id="tagSelector",completetext="",items="formData.tags")
-			div
-				span.badge(ng-repeat="tag in formData.tags") {{tag}}
+		//.form-group
+		//	label Tags
+		//	input.form-control(type="text",id="tagSelector",completetext="",items="formData.tags")
+		//	div
+		//		span.badge(ng-repeat="tag in formData.tags") {{tag}}
 		.form-group
 			label(for="type") Type
 			select.form-control(ng-model='formData.type', id="type")
 				option(value='radio') Radio
 				option(value='checkbox') Checkbox
 		.checkbox
+			label Allow Add Option On Vote
+				input(type="checkbox", ng-model='formData.addOptionOnVote')
+		.checkbox
 			label Is Active
 				input(type="checkbox", ng-model='formData.isActive')
-		.form-group
-			label Expired At
-			input.form-control(type="text",placeholder="MM/dd/yyyy", ng-model='formData.expireAt', formatinput="", format="MM/dd/yyyy")
+		//.form-group
+		//	label Expired At
+		//	input.form-control(type="text",placeholder="MM/dd/yyyy", ng-model='formData.expireAt', formatinput="", format="MM/dd/yyyy")
 		.form-group
 			label Options
 			div(ng-repeat="option in formData.formOptions")
