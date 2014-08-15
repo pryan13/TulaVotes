@@ -17,8 +17,10 @@ module.exports = function(config) {
 	var formSchema = new mongoose.Schema({
 		name: {type: String, trim: true, required: 'Form name is required!'},
 		description: {type: String, trim: true, required: 'Form description is required!'},
-		type: { type: String, enum: ['radio', 'checkbox'], default: 'radio' },
+		tags: {type: [String]},
+		type: {type: String, enum: ['radio', 'checkbox'], default: 'radio' },
 		isActive: {type: Boolean, default: false},
+		addOptionOnVote: {type: Boolean, default: false},
 		formOptions: {
 			type: [{
 				text: {type: String, trim: true, required: 'Option text is required!'},
@@ -42,8 +44,15 @@ module.exports = function(config) {
 
 	var Form = mongoose.model('Form', formSchema);
 
+	var tagSchema = new mongoose.Schema({
+		name: {type: String, trim: true, required: 'Tag name is required!'}
+	});
+
+	var Tag = mongoose.model('Tag', tagSchema);
+
 	return {
 		userObject: User,
-		formObject: Form
+		formObject: Form,
+		tagObject: Tag
 	};
 };

@@ -11,15 +11,21 @@
 		.col-sm-12.text-justify
 			p {{formData.description}}
 	div.row(ng-repeat="option in formData.formOptions")
+		.col-sm-12.text-justify
+			div(class="{{formData.type}}")
+				label {{option.text}}
+					input(ng-if="formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="formData.hasAlreadyVoted",value="true")
+					input(ng-if="!formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="showNewOptionText && formData.type === 'radio'",value="true")
+	.form-group.row(ng-if="!formData.hasAlreadyVoted && formData.addOptionOnVote && showNewOptionText")
 		.col-sm-12.text-left
-			input(ng-if="formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="formData.hasAlreadyVoted",value="true")
-			input(ng-if="!formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="formData.hasAlreadyVoted",value="true")
-			| {{option.text}}
+			textarea.form-control(ng-model="formData.newOptionText", placeholder="Enter your text here", rows="3")
+			a.close.remove-item(href="javascript:void(0)", ng-click="toggleOption(false)", data-dismiss="alert") &times;
 	div.row(ng-if="formData.hasAlreadyVoted")
 		.col-sm-12.text-left
 			chart(value='chartData',type="pie",height="400",chart-obj='chartObj')
 	.row
 		.col-sm-12.text-left
 			.btn-group
+				button(ng-if="!formData.hasAlreadyVoted && formData.addOptionOnVote && !showNewOptionText", class="btn btn-default", ng-click='toggleOption(true)') Add Option
 				button(ng-if="!formData.hasAlreadyVoted", class="btn btn-default", ng-click='vote(formData)') Vote
 				button(class="btn btn-default", ng-click='goBack()') Back
