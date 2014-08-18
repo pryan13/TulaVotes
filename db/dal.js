@@ -1,7 +1,8 @@
 module.exports = function(config) {
 	var dbObject = require('./scheme')(config),
 		userDbObject = dbObject.userObject,
-		formDbObject = dbObject.formObject;
+		formDbObject = dbObject.formObject,
+		activityDbObject = dbObject.activityObject;
 
 	//methods
 
@@ -158,6 +159,14 @@ module.exports = function(config) {
 		});
 	};
 
+	var trackActivity = function(data){
+		var activity = new activityDbObject({
+			invokedBy: data.requestedBy,
+			act: data.activity
+		});
+		activity.save();
+	};
+
 	return {
 		findUserById: findUserById,
 		getOrCreateUser: getOrCreateUser,
@@ -168,6 +177,7 @@ module.exports = function(config) {
 		voteOnForm: voteOnForm,
 		createForm: createForm,
 		updateForm: updateForm,
-		deleteForm: deleteForm
+		deleteForm: deleteForm,
+		trackActivity: trackActivity
 	}
 };

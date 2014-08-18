@@ -76,7 +76,9 @@ module.exports = function(dal) {
 
 //save vote
 	router.post('/forms/vote', auth, function (req, res) {
-		dal.voteOnForm({voteData: req.body, requestedBy: req.session.user.id}, function (err, form) {
+		var uId = req.session.user.id;
+		dal.voteOnForm({voteData: req.body, requestedBy: uId}, function (err, form) {
+			dal.trackActivity({requestedBy: uId, activity: 'User voted on form'});
 			onRequestComplete(res, err, form);
 		})
 	});

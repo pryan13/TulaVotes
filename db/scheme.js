@@ -50,9 +50,18 @@ module.exports = function(config) {
 
 	var Tag = mongoose.model('Tag', tagSchema);
 
+	var activityScheme = mongoose.Schema({
+		invokedBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+		invokedAt: {type: Date, default: Date.now},
+		act: String
+	});
+
+	var Activity = mongoose.model('Activity', activityScheme);
+
 	return {
 		userObject: User,
 		formObject: Form,
-		tagObject: Tag
+		tagObject: Tag,
+		activityObject: Activity
 	};
 };
