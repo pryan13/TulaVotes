@@ -140,7 +140,8 @@ module.exports = function(config) {
 			isActive: !!data.formData.isActive,
 			formOptions: data.formData.formOptions,
 			createdBy: data.requestedBy,
-			expireAt: data.formData.expireAt
+			expireAt: data.formData.expireAt,
+			addOptionOnVote: data.formData.addOptionOnVote
 		});
 		item.save(function (err, form) {
 			onComplete(err, form);
