@@ -49,6 +49,10 @@ a.link-white:active {
 	text-decoration: none;
 }
 
+.left-margin-20{
+	margin-left: 20px;
+}
+
 .remove-item{
 	position: absolute;
 	right: 2px;
