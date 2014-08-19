@@ -25,6 +25,7 @@ module.exports = function(dal) {
 			reqData = {
 				requestedBy: req.session.user.id,
 				getActiveOnly: !isMine, //get only active forms if not mine and all forms otherwise
+				getNotExpiredOnly: !isMine, //get only not expired forms if not mine and all forms otherwise
 				formOwner: isMine ? req.session.user.id : owner
 			};
 		dal.getList(reqData, function (err, forms) {

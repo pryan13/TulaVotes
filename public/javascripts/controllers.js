@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart', 'tulaVotes.formatInput', 'tulaVotes.completetext'])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart', 'tulaVotes.formatInput', 'tulaVotes.completetext', 'tulaVotes.filters'])
 	.controller('indexListCtrl', ['$scope', '$http', '$location',
 		function ($scope, $http, $location) {
 			$scope.showMine = false;
