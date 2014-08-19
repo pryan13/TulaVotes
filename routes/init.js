@@ -25,8 +25,10 @@ module.exports.init = function(app){
 	app.post('/login', function(req, res) {
 		if(req.body.email){
 			dal.getOrCreateUser({email: req.body.email.trim().toLowerCase()}, function(result){
-				if(result)
+				if(result) {
 					req.session.user = {id: result._id, name: result.name};
+					dal.trackActivity({requestedBy: result._id, activity: 'User logged in'});
+				}
 				res.redirect('/');
 			});
 		}
@@ -36,6 +38,7 @@ module.exports.init = function(app){
 	});
 	app.get('/logout', function(req, res){
 		if(req.session.user){
+			dal.trackActivity({requestedBy: req.session.user.id, activity: 'User logged out'});
 			req.session.destroy();
 			res.redirect('/');
 		}

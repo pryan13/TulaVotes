@@ -1,5 +1,5 @@
 .container
-	.page-header.text-center
+	.header.text-center
 		h2 Forms you can vote
 	.row
 		.col-sm-8.col-sm-offset-2.text-center
@@ -23,3 +23,7 @@
 						i {{form.createdBy.name}}
 						| &nbsp;create at&nbsp;
 						i {{form.createdAt | date: 'H:mm:ss MM/dd/yyyy'}}
+						span.left-margin-20
+							span(ng-if="form.expireAt", ng-class="{true: 'error', false: 'success'}[form.isExpired]") {{form.isExpired | booleanToText:['has expired', 'will expire']}}
+								| at&nbsp;
+								i {{form.expireAt | date: 'H:mm:ss MM/dd/yyyy'}}

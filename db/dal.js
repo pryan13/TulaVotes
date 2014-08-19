@@ -1,7 +1,8 @@
 module.exports = function(config) {
 	var dbObject = require('./scheme')(config),
 		userDbObject = dbObject.userObject,
-		formDbObject = dbObject.formObject;
+		formDbObject = dbObject.formObject,
+		activityDbObject = dbObject.activityObject;
 
 	//methods
 
@@ -32,17 +33,28 @@ module.exports = function(config) {
 		}
 	};
 
+	var nonExpired = function(query){
+		var now = new Date();
+		query = query.where({$or: [{expireAt: {$gte: now}},  {expireAt: {$exists: false}}]});
+		return query;
+	};
+
 	var getList = function (data, onComplete) {
 		var qParam = {};
 		if(data.formOwner)
 			qParam.createdBy = data.formOwner;
 		if(data.getActiveOnly)
 			qParam.isActive = data.getActiveOnly;
-		formDbObject.find(qParam).populate('createdBy', 'name').exec(function (err, forms) {
+		var query = formDbObject.find(qParam);
+		if(data.getNotExpiredOnly)
+			query = nonExpired(query);
+		query.populate('createdBy', 'name').exec(function (err, forms) {
 			var response = [];
+			var currentDate = new Date();
 			for(var i = 0; i < forms.length; i++){
 				response[i] = forms[i].toJSON();
 				response[i].isEditable = forms[i].isEditableBy(data.requestedBy);
+				response[i].isExpired = !!forms[i].expireAt && forms[i].expireAt < currentDate;
 			}
 			onComplete(err, response);
 		});
@@ -87,7 +99,8 @@ module.exports = function(config) {
 				description: form.description,
 				createdBy: form.createdBy.name,
 				createdAt: form.createdAt,
-				type: form.type
+				type: form.type,
+				addOptionOnVote: form.addOptionOnVote
 			};
 			var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
 			result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
@@ -105,6 +118,12 @@ module.exports = function(config) {
 					form.formOptions[j].votes.push({votedBy: data.requestedBy});
 					break;
 				}
+			}
+			if(data.voteData.newOption){
+				form.formOptions.push({
+					text: data.voteData.newOption,
+					votes: [{votedBy: data.requestedBy}]
+				});
 			}
 			form.save(function (err, form) {
 				var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
@@ -136,6 +155,7 @@ module.exports = function(config) {
 			form.isActive = data.isActive;
 			form.expireAt = data.expireAt;
 			form.formOptions = data.formOptions;
+			form.addOptionOnVote = data.addOptionOnVote;
 			form.save(function (err, form) {
 				onComplete(err, form);
 			});
@@ -150,6 +170,14 @@ module.exports = function(config) {
 		});
 	};
 
+	var trackActivity = function(data){
+		var activity = new activityDbObject({
+			invokedBy: data.requestedBy,
+			act: data.activity
+		});
+		activity.save();
+	};
+
 	return {
 		findUserById: findUserById,
 		getOrCreateUser: getOrCreateUser,
@@ -160,6 +188,7 @@ module.exports = function(config) {
 		voteOnForm: voteOnForm,
 		createForm: createForm,
 		updateForm: updateForm,
-		deleteForm: deleteForm
+		deleteForm: deleteForm,
+		trackActivity: trackActivity
 	}
 };

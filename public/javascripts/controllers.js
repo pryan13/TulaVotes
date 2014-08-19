@@ -1,4 +1,4 @@
-angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart', 'tulaVotes.formatInput'])
+angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart', 'tulaVotes.formatInput', 'tulaVotes.completetext', 'tulaVotes.filters'])
 	.controller('indexListCtrl', ['$scope', '$http', '$location',
 		function ($scope, $http, $location) {
 			$scope.showMine = false;
@@ -87,16 +87,36 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				.error(function (response) {
 					console.log('Error: ' + response);
 				});
+			$scope.toggleOption = function(showNewOption){
+				$scope.showNewOptionText = showNewOption;
+				if($scope.formData.type !== 'radio' || !showNewOption)
+					return;
+				angular.forEach($scope.formData.formOptions, function(item){
+					item.checked = false;
+				});
+			};
 			$scope.vote = function(data){
 				var voteData = {formId: data._id, selectedOptions: []};
-				angular.forEach(data.formOptions, function(item){
-					if(item.checked)
-						voteData.selectedOptions.push(item._id);
-				});
+				if($scope.showNewOptionText){
+					voteData.newOption = $scope.formData.newOptionText;
+				}
+				if($scope.formData.type !== 'radio' || !$scope.showNewOptionText) {
+					var isAnyChecked = false;
+					angular.forEach(data.formOptions, function (item) {
+						isAnyChecked |= item.checked;
+						if (item.checked)
+							voteData.selectedOptions.push(item._id);
+					});
+				}
+				if(!isAnyChecked && !$scope.showNewOptionText || $scope.showNewOptionText && !voteData.newOption){
+					NotifyService.notify({type: NOTIFICATION_TYPES.error, message: "No one option is selected"});
+					return;
+				}
 				$http.post('/api/forms/vote', voteData)
 					.success(function (response) {
 						if (response.success) {
 							initChart(response.data);
+							$scope.formData.formOptions = response.data;
 							$scope.formData.hasAlreadyVoted = true;
 							NotifyService.notify({type: NOTIFICATION_TYPES.success});
 						}

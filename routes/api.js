@@ -25,6 +25,7 @@ module.exports = function(dal) {
 			reqData = {
 				requestedBy: req.session.user.id,
 				getActiveOnly: !isMine, //get only active forms if not mine and all forms otherwise
+				getNotExpiredOnly: !isMine, //get only not expired forms if not mine and all forms otherwise
 				formOwner: isMine ? req.session.user.id : owner
 			};
 		dal.getList(reqData, function (err, forms) {
@@ -76,7 +77,9 @@ module.exports = function(dal) {
 
 //save vote
 	router.post('/forms/vote', auth, function (req, res) {
-		dal.voteOnForm({voteData: req.body, requestedBy: req.session.user.id}, function (err, form) {
+		var uId = req.session.user.id;
+		dal.voteOnForm({voteData: req.body, requestedBy: uId}, function (err, form) {
+			dal.trackActivity({requestedBy: uId, activity: 'User voted on form'});
 			onRequestComplete(res, err, form);
 		})
 	});
