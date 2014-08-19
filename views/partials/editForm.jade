@@ -29,11 +29,9 @@
 			label Options
 			div(ng-repeat="option in formData.formOptions")
 				.form-group.row
-					.col-sm-10.text-left
+					.col-sm-12.text-left
 						textarea.form-control(ng-model='option.text', placeholder="Enter your text here", rows="3")
-					.col-sm-2.text-left(ng-if="$index>0 || formData.formOptions.length > 1")
-						a.close(href="javascript:void(0)", ng-click="deleteOption($index)", data-dismiss="alert") &times;
-
+						a.close.remove-item(href="javascript:void(0)", ng-if="$index>0 || formData.formOptions.length > 1", ng-click="deleteOption($index)", data-dismiss="alert") &times;
 	.row
 		.col-sm-6.text-left
 			.btn-toolbar
