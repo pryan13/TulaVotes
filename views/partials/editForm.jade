@@ -22,9 +22,9 @@
 		.checkbox
 			label Is Active
 				input(type="checkbox", ng-model='formData.isActive')
-		//.form-group
-		//	label Expired At
-		//	input.form-control(type="text",placeholder="MM/dd/yyyy", ng-model='formData.expireAt', formatinput="", format="MM/dd/yyyy")
+		.form-group
+			label Expired At
+			input.form-control(type="text",placeholder="MM/dd/yyyy H:mm:ss", ng-model='formData.expireAt', formatinput="", format="MM/dd/yyyy H:mm:ss")
 		.form-group
 			label Options
 			div(ng-repeat="option in formData.formOptions")

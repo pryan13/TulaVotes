@@ -33,17 +33,28 @@ module.exports = function(config) {
 		}
 	};
 
+	var nonExpired = function(query){
+		var now = new Date();
+		query = query.where({$or: [{expireAt: {$gte: now}},  {expireAt: {$exists: false}}]});
+		return query;
+	};
+
 	var getList = function (data, onComplete) {
 		var qParam = {};
 		if(data.formOwner)
 			qParam.createdBy = data.formOwner;
 		if(data.getActiveOnly)
 			qParam.isActive = data.getActiveOnly;
-		formDbObject.find(qParam).populate('createdBy', 'name').exec(function (err, forms) {
+		var query = formDbObject.find(qParam);
+		if(data.getNotExpiredOnly)
+			query = nonExpired(query);
+		query.populate('createdBy', 'name').exec(function (err, forms) {
 			var response = [];
+			var currentDate = new Date();
 			for(var i = 0; i < forms.length; i++){
 				response[i] = forms[i].toJSON();
 				response[i].isEditable = forms[i].isEditableBy(data.requestedBy);
+				response[i].isExpired = !!forms[i].expireAt && forms[i].expireAt < currentDate;
 			}
 			onComplete(err, response);
 		});
