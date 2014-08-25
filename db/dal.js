@@ -2,7 +2,8 @@ module.exports = function(config) {
 	var dbObject = require('./scheme')(config),
 		userDbObject = dbObject.userObject,
 		formDbObject = dbObject.formObject,
-		activityDbObject = dbObject.activityObject;
+		activityDbObject = dbObject.activityObject,
+		tagDbObject = dbObject.tagObject;
 
 	//methods
 
@@ -179,6 +180,16 @@ module.exports = function(config) {
 		activity.save();
 	};
 
+	var getTagList = function(query, onComplete){
+		tagDbObject.find({name: new RegExp(query, 'i')}).exec(function(err, tagList){
+			var result = [];
+			for(var i = 0; i < tagList.length; i++){
+				result.push(tagList[i].toJSON());
+			}
+			onComplete(err, result);
+		});
+	};
+
 	return {
 		findUserById: findUserById,
 		getOrCreateUser: getOrCreateUser,
@@ -190,6 +201,7 @@ module.exports = function(config) {
 		createForm: createForm,
 		updateForm: updateForm,
 		deleteForm: deleteForm,
-		trackActivity: trackActivity
+		trackActivity: trackActivity,
+		getTagList: getTagList
 	}
 };

@@ -58,3 +58,13 @@ a.link-white:active {
 	right: 2px;
 	top: -8px;
 }
+
+.prompt{
+	list-style: none outside none;
+}
+
+.prompt .prompt-item:hover,
+.prompt .prompt-item:focus,
+.prompt .prompt-item:active{
+	background-color: #eee;
+}

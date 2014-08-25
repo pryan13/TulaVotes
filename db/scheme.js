@@ -46,6 +46,8 @@ module.exports = function(config) {
 
 	var tagSchema = new mongoose.Schema({
 		name: {type: String, trim: true, required: 'Tag name is required!'}
+	},{
+		versionKey: false
 	});
 
 	var Tag = mongoose.model('Tag', tagSchema);
