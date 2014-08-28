@@ -15,7 +15,19 @@
 			div(class="{{formData.type}}")
 				label {{option.text}}
 					input(ng-if="formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="formData.hasAlreadyVoted",value="true")
-					input(ng-if="!formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-model="option.checked",ng-disabled="showNewOptionText && formData.type === 'radio'",value="true")
+					span(ng-if="!formData.hasAlreadyVoted",ng-switch="formData.type")
+						input(
+							ng-switch-when="checkbox",
+							type='checkbox',
+							name="formVotes",
+							ng-model="option.checked")
+						input(
+							ng-disabled="showNewOptionText",
+							ng-switch-when="radio",
+							type='radio',
+							name="formVotes",
+							ng-model="checkedRadio.option",
+							value="{{option._id}}")
 	.form-group.row(ng-if="!formData.hasAlreadyVoted && formData.addOptionOnVote && showNewOptionText")
 		.col-sm-12.text-left
 			textarea.form-control(ng-model="formData.newOptionText", placeholder="Enter your text here", rows="3")
