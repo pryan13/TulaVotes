@@ -16,6 +16,7 @@ angular.module('tulaVotes.completetext', [])
 				scope.clickItem = function(ttag){
 					scope.items.push(ttag);
 					scope.promptItems = [];
+					element.val('');
 				};
 
 				var resultSelect = $compile(promptSelect)(scope);
@@ -32,7 +33,12 @@ angular.module('tulaVotes.completetext', [])
 					}
 					$http.get('/api/tags/' + tag)
 						.success(function(response){
-							sc.promptItems = response.data;
+							if(response.data.length == 0){
+								//new tag
+								sc.promptItems = [{name: tag}];
+							} else {
+								sc.promptItems = response.data;
+							}
 						});
 				});
 
