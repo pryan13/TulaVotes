@@ -91,25 +91,30 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				$scope.showNewOptionText = showNewOption;
 				if($scope.formData.type !== 'radio' || !showNewOption)
 					return;
-				angular.forEach($scope.formData.formOptions, function(item){
-					item.checked = false;
-				});
+				$scope.checkedRadio.option = "";
 			};
+			$scope.checkedRadio = {option: ""};
 			$scope.vote = function(data){
 				var voteData = {formId: data._id, selectedOptions: []};
 				if($scope.showNewOptionText){
 					voteData.newOption = $scope.formData.newOptionText;
 				}
+
+				var isAnyChecked = false;
 				if($scope.formData.type !== 'radio' || !$scope.showNewOptionText) {
-					var isAnyChecked = false;
 					angular.forEach(data.formOptions, function (item) {
-						isAnyChecked |= item.checked;
-						if (item.checked)
+						var itemChecked = item.checked || item._id === $scope.checkedRadio.option; //check both checkbox and radio cases
+						if (itemChecked)
 							voteData.selectedOptions.push(item._id);
+						isAnyChecked = isAnyChecked || itemChecked;
 					});
 				}
-				if(!isAnyChecked && !$scope.showNewOptionText || $scope.showNewOptionText && !voteData.newOption){
+				if(!$scope.showNewOptionText && !isAnyChecked){
 					NotifyService.notify({type: NOTIFICATION_TYPES.error, message: "No one option is selected"});
+					return;
+				}
+				if($scope.showNewOptionText && !voteData.newOption){
+					NotifyService.notify({type: NOTIFICATION_TYPES.error, message: "Your custom option is empty"});
 					return;
 				}
 				$http.post('/api/forms/vote', voteData)
