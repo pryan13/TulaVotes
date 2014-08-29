@@ -17,7 +17,7 @@ module.exports = function(config) {
 	var formSchema = new mongoose.Schema({
 		name: {type: String, trim: true, required: 'Form name is required!'},
 		description: {type: String, trim: true, required: 'Form description is required!'},
-		tags: {type: [String]},
+		tags: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}]},
 		type: {type: String, enum: ['radio', 'checkbox'], default: 'radio' },
 		isActive: {type: Boolean, default: false},
 		addOptionOnVote: {type: Boolean, default: false},

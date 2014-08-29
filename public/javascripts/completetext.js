@@ -29,6 +29,9 @@ angular.module('tulaVotes.completetext', [])
 					var tag = this.value;
 					var sc = resultSelect.scope();
 					if(tag.length == 0){
+						$timeout(function () {
+							sc.promptItems = [];
+						}, 10);
 						return;
 					}
 					$http.get('/api/tags/' + tag)

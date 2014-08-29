@@ -4,6 +4,7 @@ module.exports = function(config) {
 		formDbObject = dbObject.formObject,
 		activityDbObject = dbObject.activityObject,
 		tagDbObject = dbObject.tagObject;
+	var async = require('async');
 
 	//methods
 
@@ -62,7 +63,7 @@ module.exports = function(config) {
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findOne({_id: id}).select('-formOptions.votes').exec(function (err, form) {
+		formDbObject.findOne({_id: id}).select('-formOptions.votes').populate('tags', 'name').exec(function (err, form) {
 			var response = form.toJSON();
 			onComplete(err, response);
 		});
@@ -150,16 +151,29 @@ module.exports = function(config) {
 	};
 
 	var updateForm = function (data, onComplete) {
-		formDbObject.findById(data._id, function (err, form) {
-			form.name = data.name;
-			form.description = data.description;
-			form.type = data.type;
-			form.isActive = data.isActive;
-			form.expireAt = data.expireAt;
-			form.formOptions = data.formOptions;
-			form.addOptionOnVote = data.addOptionOnVote;
-			form.save(function (err, form) {
-				onComplete(err, form);
+		async.map(data.tags, function(tag, callback){
+			if(!tag._id) {
+				new tagDbObject({name: tag.name})
+					.save(function (err, savedTag) {
+						callback(err, savedTag._id);
+					});
+			}
+			else{
+				callback(null, tag._id);
+			}
+		}, function(err, results){
+			formDbObject.findById(data._id, function (err, form) {
+				form.name = data.name;
+				form.description = data.description;
+				form.type = data.type;
+				form.isActive = data.isActive;
+				form.expireAt = data.expireAt;
+				form.formOptions = data.formOptions;
+				form.addOptionOnVote = data.addOptionOnVote;
+				form.tags = results;
+				form.save(function (err, form) {
+					getForm(form._id, onComplete);
+				});
 			});
 		});
 	};
