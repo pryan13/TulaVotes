@@ -1,6 +1,6 @@
 angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants', 'tulaVotes.chart', 'tulaVotes.formatInput', 'tulaVotes.completetext', 'tulaVotes.filters'])
-	.controller('indexListCtrl', ['$scope', '$http', '$location',
-		function ($scope, $http, $location) {
+	.controller('indexListCtrl', ['$scope', '$http', '$location', '$window',
+		function ($scope, $http, $location, $window) {
 			$scope.showMine = false;
 			$scope.formData = {};
 
@@ -20,13 +20,15 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			refreshFormsList();
 
 			$scope.deleteForm = function (id) {
-				$http.delete('/api/forms/' + id)
-					.success(function (response) {
-						refreshFormsList();
-					})
-					.error(function (response) {
-						console.log('Error: ' + response);
-					});
+				if($window.confirm('Do you realy want delete this form?')) {
+					$http.delete('/api/forms/' + id)
+						.success(function (response) {
+							refreshFormsList();
+						})
+						.error(function (response) {
+							console.log('Error: ' + response);
+						});
+				}
 			};
 
 			$scope.toggleMine = function(){
