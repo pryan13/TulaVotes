@@ -145,7 +145,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.isNew = $routeParams.formId === undefined;
 			//$scope.formOptions = [];
 			if($scope.isNew){
-				$scope.formData = {formOptions: [], type: 'radio'};
+				$scope.formData = {formOptions: [], type: 'radio', tags: []};
 				$scope.formData.formOptions.push({text: ""});
 			}
 			
