@@ -44,11 +44,6 @@ angular.module('tulaVotes.completetext', [])
 							}
 						});
 				});
-
-				var selectItems = select.children();
-				selectItems.on("click", function(){
-					alert(this);
-				});
 			}
 		};
 	}]);
