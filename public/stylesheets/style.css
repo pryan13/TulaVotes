@@ -47,6 +47,7 @@ a.link-white:focus,
 a.link-white:active {
 	color: #fff;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 .left-margin-20{
@@ -57,4 +58,14 @@ a.link-white:active {
 	position: absolute;
 	right: 2px;
 	top: -8px;
+}
+
+.prompt{
+	list-style: none outside none;
+}
+
+.prompt .prompt-item:hover,
+.prompt .prompt-item:focus,
+.prompt .prompt-item:active{
+	background-color: #eee;
 }

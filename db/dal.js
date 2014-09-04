@@ -2,7 +2,9 @@ module.exports = function(config) {
 	var dbObject = require('./scheme')(config),
 		userDbObject = dbObject.userObject,
 		formDbObject = dbObject.formObject,
-		activityDbObject = dbObject.activityObject;
+		activityDbObject = dbObject.activityObject,
+		tagDbObject = dbObject.tagObject;
+	var async = require('async');
 
 	//methods
 
@@ -61,7 +63,7 @@ module.exports = function(config) {
 	};
 
 	var getForm = function (id, onComplete) {
-		formDbObject.findOne({_id: id}).select('-formOptions.votes').exec(function (err, form) {
+		formDbObject.findOne({_id: id}).select('-formOptions.votes').populate('tags', 'name').exec(function (err, form) {
 			var response = form.toJSON();
 			onComplete(err, response);
 		});
@@ -133,32 +135,54 @@ module.exports = function(config) {
 	};
 
 	var createForm = function (data, onComplete) {
-		var item = new formDbObject({
-			name: data.formData.name,
-			description: data.formData.description,
-			type: data.formData.type,
-			isActive: !!data.formData.isActive,
-			formOptions: data.formData.formOptions,
-			createdBy: data.requestedBy,
-			expireAt: data.formData.expireAt,
-			addOptionOnVote: data.formData.addOptionOnVote
+		saveFormTags(data.formData.tags, function (err, tagIds) {
+			var item = new formDbObject({
+				name: data.formData.name,
+				description: data.formData.description,
+				type: data.formData.type,
+				isActive: !!data.formData.isActive,
+				formOptions: data.formData.formOptions,
+				createdBy: data.requestedBy,
+				expireAt: data.formData.expireAt,
+				addOptionOnVote: data.formData.addOptionOnVote,
+				tags: tagIds
+			});
+			item.save(function (err, form) {
+				getForm(form._id, onComplete);
+			});
 		});
-		item.save(function (err, form) {
-			onComplete(err, form);
+	};
+
+	var saveFormTags = function(tags, onComplete){
+		async.map(tags, function(tag, callback){
+			if(!tag._id) {
+				new tagDbObject({name: tag.name})
+					.save(function (err, savedTag) {
+						callback(err, savedTag._id);
+					});
+			}
+			else{
+				callback(null, tag._id);
+			}
+		}, function(err, results){
+			onComplete(err, results);
 		});
 	};
 
 	var updateForm = function (data, onComplete) {
-		formDbObject.findById(data._id, function (err, form) {
-			form.name = data.name;
-			form.description = data.description;
-			form.type = data.type;
-			form.isActive = data.isActive;
-			form.expireAt = data.expireAt;
-			form.formOptions = data.formOptions;
-			form.addOptionOnVote = data.addOptionOnVote;
-			form.save(function (err, form) {
-				onComplete(err, form);
+		saveFormTags(data.tags, function (err, tagIds) {
+			formDbObject.findById(data._id, function (err, form) {
+				form.name = data.name;
+				form.description = data.description;
+				form.type = data.type;
+				form.isActive = data.isActive;
+				form.expireAt = data.expireAt;
+				form.formOptions = data.formOptions;
+				form.addOptionOnVote = data.addOptionOnVote;
+				form.tags = tagIds;
+				form.save(function (err, form) {
+					getForm(form._id, onComplete);
+				});
 			});
 		});
 	};
@@ -179,6 +203,16 @@ module.exports = function(config) {
 		activity.save();
 	};
 
+	var getTagList = function(query, onComplete){
+		tagDbObject.find({name: new RegExp(query, 'i')}).exec(function(err, tagList){
+			var result = [];
+			for(var i = 0; i < tagList.length; i++){
+				result.push(tagList[i].toJSON());
+			}
+			onComplete(err, result);
+		});
+	};
+
 	return {
 		findUserById: findUserById,
 		getOrCreateUser: getOrCreateUser,
@@ -190,6 +224,7 @@ module.exports = function(config) {
 		createForm: createForm,
 		updateForm: updateForm,
 		deleteForm: deleteForm,
-		trackActivity: trackActivity
+		trackActivity: trackActivity,
+		getTagList: getTagList
 	}
 };

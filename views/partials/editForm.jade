@@ -6,11 +6,11 @@
 		.form-group
 			label(for='decription') Description
 			textarea.form-control(ng-model='formData.description', id="decription", rows="3", placeholder="Enter description")
-		//.form-group
-		//	label Tags
-		//	input.form-control(type="text",id="tagSelector",completetext="",items="formData.tags")
-		//	div
-		//		span.badge(ng-repeat="tag in formData.tags") {{tag}}
+		.form-group
+			label Tags
+			div(style="margin-bottom: 5px;")
+				span.badge(ng-repeat="tag in formData.tags") {{tag.name}}
+			input.form-control(type="text",id="tagSelector",completetext="",items="formData.tags")
 		.form-group
 			label(for="type") Type
 			select.form-control(ng-model='formData.type', id="type")

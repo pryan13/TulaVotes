@@ -1,32 +1,48 @@
 angular.module('tulaVotes.completetext', [])
-	.directive('completetext', ['$timeout', '$compile', function($timeout, $compile){
+	.directive('completetext', ['$timeout', '$compile', '$http', function($timeout, $compile, $http){
 		return {
 			restrict: 'A',
 			scope:{
 				items: '='
 			},
 			link: function(scope, element, attr, ctrl){
-				scope.test = "test";
 				var promptSelect = '<div style="position: relative;">' +
-										'<select class="{{test}} form-control" id="' + element.attr('id') +
-											'_promptSelect" style="position: absolute; top: -34px; z-index: -1;">' +
-											'<option ng-repeat="item in promptItems">{{item}}</option>' +
-										'</select>' +
+										'<ul class="prompt" id="' + element.attr('id') + '_promptSelect" >' +
+											'<li class="prompt-item" ng-click="clickItem(item)" ng-repeat="item in promptItems" data-id="{{item._id}}">{{item.name}}</li>' +
+										'</ul>' +
 									'</div>';
 				scope.promptItems =[];
+
+				scope.clickItem = function(ttag){
+					scope.items.push(ttag);
+					scope.promptItems = [];
+					element.val('');
+				};
+
 				var resultSelect = $compile(promptSelect)(scope);
+				var select = resultSelect.children();
 				$timeout(function () {
 					element.after(resultSelect);
 				}, 300);
 
-				element.on("change", function(){
+				element.on("keyup", function(){
 					var tag = this.value;
 					var sc = resultSelect.scope();
-					sc.promptItems.unshift(tag);
-					sc.$digest();
-					$timeout(function () {
-						scope.items.push(tag);
-					}, 300);
+					if(tag.length == 0){
+						$timeout(function () {
+							sc.promptItems = [];
+						}, 10);
+						return;
+					}
+					$http.get('/api/tags/' + tag)
+						.success(function(response){
+							if(response.data.length == 0){
+								//new tag
+								sc.promptItems = [{name: tag}];
+							} else {
+								sc.promptItems = response.data;
+							}
+						});
 				});
 			}
 		};

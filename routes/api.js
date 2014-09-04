@@ -105,5 +105,11 @@ module.exports = function(dal) {
 		})
 	});
 
+	router.get('/tags/:query', auth, function(req, res){
+		dal.getTagList(req.params.query, function(err, tagList){
+			onRequestComplete(res, err, tagList);
+		});
+	});
+
 	return router;
 };
