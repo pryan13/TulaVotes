@@ -135,23 +135,26 @@ module.exports = function(config) {
 	};
 
 	var createForm = function (data, onComplete) {
-		var item = new formDbObject({
-			name: data.formData.name,
-			description: data.formData.description,
-			type: data.formData.type,
-			isActive: !!data.formData.isActive,
-			formOptions: data.formData.formOptions,
-			createdBy: data.requestedBy,
-			expireAt: data.formData.expireAt,
-			addOptionOnVote: data.formData.addOptionOnVote
-		});
-		item.save(function (err, form) {
-			onComplete(err, form);
+		saveFormTags(data.formData.tags, function (err, tagIds) {
+			var item = new formDbObject({
+				name: data.formData.name,
+				description: data.formData.description,
+				type: data.formData.type,
+				isActive: !!data.formData.isActive,
+				formOptions: data.formData.formOptions,
+				createdBy: data.requestedBy,
+				expireAt: data.formData.expireAt,
+				addOptionOnVote: data.formData.addOptionOnVote,
+				tags: tagIds
+			});
+			item.save(function (err, form) {
+				getForm(form._id, onComplete);
+			});
 		});
 	};
 
-	var updateForm = function (data, onComplete) {
-		async.map(data.tags, function(tag, callback){
+	var saveFormTags = function(tags, onComplete){
+		async.map(tags, function(tag, callback){
 			if(!tag._id) {
 				new tagDbObject({name: tag.name})
 					.save(function (err, savedTag) {
@@ -162,6 +165,12 @@ module.exports = function(config) {
 				callback(null, tag._id);
 			}
 		}, function(err, results){
+			onComplete(err, results);
+		});
+	};
+
+	var updateForm = function (data, onComplete) {
+		saveFormTags(data.tags, function (err, tagIds) {
 			formDbObject.findById(data._id, function (err, form) {
 				form.name = data.name;
 				form.description = data.description;
@@ -170,7 +179,7 @@ module.exports = function(config) {
 				form.expireAt = data.expireAt;
 				form.formOptions = data.formOptions;
 				form.addOptionOnVote = data.addOptionOnVote;
-				form.tags = results;
+				form.tags = tagIds;
 				form.save(function (err, form) {
 					getForm(form._id, onComplete);
 				});
