@@ -47,6 +47,7 @@ a.link-white:focus,
 a.link-white:active {
 	color: #fff;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 .left-margin-20{

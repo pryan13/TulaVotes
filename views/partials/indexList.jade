@@ -13,7 +13,7 @@
 			ul.list-group
 				li.list-group-item(ng-repeat='form in forms | filter:searchQuery',ng-class='{true: "form-active", false: "form-inactive"}[form.isActive]')
 					span.badge(ng-if="form.isEditable",ng-click=('deleteForm(form._id)'))
-						a.link-white(href="#") delete
+						a.link-white delete
 					span.badge(ng-if="form.isEditable")
 						a.link-white(href='#/edit/{{form._id}}') edit
 					div
