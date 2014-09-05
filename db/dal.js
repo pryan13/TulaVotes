@@ -94,7 +94,7 @@ module.exports = function(config) {
 	};
 
 	var getFormView = function (data, onComplete) {
-		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').exec(function (err, form) {
+		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('tags', 'name').exec(function (err, form) {
 			var result = {
 				_id: form._id,
 				name: form.name,
@@ -102,7 +102,8 @@ module.exports = function(config) {
 				createdBy: form.createdBy.name,
 				createdAt: form.createdAt,
 				type: form.type,
-				addOptionOnVote: form.addOptionOnVote
+				addOptionOnVote: form.addOptionOnVote,
+				tags: form.tags
 			};
 			var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
 			result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
