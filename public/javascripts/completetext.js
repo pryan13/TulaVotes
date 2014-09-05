@@ -7,12 +7,13 @@ angular.module('tulaVotes.completetext', [])
 			},
 			link: function(scope, element, attr, ctrl){
 				var promptSelect = '<div style="position: relative;">' +
-										'<ul style="display: none;" class="prompt" id="' + element.attr('id') + '_promptSelect" >' +
+										'<ul style="display: none;" class="prompt" ng-mouseover="overPrompt=true" ng-mouseleave="overPrompt=false">' +
 											'<li class="prompt-item" ng-class="{true:\'active\'}[$index==$parent.activeItem]" ng-mouseover="$parent.activeItem=$index" ng-click="clickItem(item)" ng-repeat="item in promptItems">{{item.name}}</li>' +
 										'</ul>' +
 									'</div>';
 				scope.promptItems =[];
 				scope.activeItem = -1;
+				scope.overPrompt = false;
 
 				scope.clickItem = function(tag){
 					var isTagFound = false;
@@ -21,9 +22,8 @@ angular.module('tulaVotes.completetext', [])
 						if(isTagFound)
 							break;
 					}
-					scope.promptItems = [];
+					clearPrompt();
 					element.val('');
-					hide();
 					if(!isTagFound)
 						scope.items.push(tag);
 				};
@@ -46,7 +46,6 @@ angular.module('tulaVotes.completetext', [])
 						//enter
 						if(code == 13){
 							scope.clickItem(scope.promptItems[scope.activeItem]);
-							clearPrompt();
 							return;
 						}
 						//escape
@@ -79,7 +78,12 @@ angular.module('tulaVotes.completetext', [])
 						scope.activeItem = -1;
 					}, 10);
 				};
-				element.on("blur", clearPrompt);
+				element.on("blur", function(){
+					if(scope.overPrompt)
+						return;
+					else
+						clearPrompt();
+				});
 				element.on("keyup", function(e){
 					if([13, 27, 38, 40].indexOf(e.keyCode) >= 0){
 						keyAction(e.keyCode);
