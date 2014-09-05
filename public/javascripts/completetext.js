@@ -8,10 +8,11 @@ angular.module('tulaVotes.completetext', [])
 			link: function(scope, element, attr, ctrl){
 				var promptSelect = '<div style="position: relative;">' +
 										'<ul style="display: none;" class="prompt" id="' + element.attr('id') + '_promptSelect" >' +
-											'<li class="prompt-item" ng-click="clickItem(item)" ng-repeat="item in promptItems" data-id="{{item._id}}">{{item.name}}</li>' +
+											'<li class="prompt-item" ng-class="{true:\'active\'}[$index==$parent.activeItem]" ng-mouseover="$parent.activeItem=$index" ng-click="clickItem(item)" ng-repeat="item in promptItems">{{item.name}}</li>' +
 										'</ul>' +
 									'</div>';
 				scope.promptItems =[];
+				scope.activeItem = -1;
 
 				scope.clickItem = function(tag){
 					var isTagFound = false;
@@ -39,24 +40,63 @@ angular.module('tulaVotes.completetext', [])
 				};
 				var hide = function(){
 					prompt.css('display', 'none');
+					//scope.activeItem = -1;
 				};
-
-				element.on("keyup", function(){
+				var keyAction = function(code){
+					$timeout(function () {
+						//enter
+						if(code == 13){
+							scope.clickItem(scope.promptItems[scope.activeItem]);
+							clearPrompt();
+							return;
+						}
+						//escape
+						if(code == 27){
+							clearPrompt();
+							return;
+						}
+						var max = scope.promptItems.length;
+						//up arrow
+						if(code == 38){
+							if(scope.activeItem == 0 || scope.activeItem == -1)
+								scope.activeItem = max - 1;
+							else
+								scope.activeItem -= 1;
+							return;
+						}
+						//down arrow
+						if(code == 40){
+							if(scope.activeItem == max - 1)
+								scope.activeItem = 0;
+							else
+								scope.activeItem += 1;
+						}
+					}, 10);
+				};
+				var clearPrompt = function(){
+					hide();
+					$timeout(function () {
+						scope.promptItems = [];
+					}, 10);
+				};
+				element.on("blur", clearPrompt);
+				element.on("keyup", function(e){
+					if([13, 27, 38, 40].indexOf(e.keyCode) >= 0){
+						keyAction(e.keyCode);
+						return;
+					}
 					var tag = this.value;
-					var sc = resultSelect.scope();
 					if(tag.length == 0){
-						$timeout(function () {
-							sc.promptItems = [];
-						}, 10);
+						clearPrompt();
 						return;
 					}
 					$http.get('/api/tags/' + tag)
 						.success(function(response){
 							if(response.data.length == 0){
 								//new tag
-								sc.promptItems = [{name: tag}];
+								scope.promptItems = [{name: tag}];
 							} else {
-								sc.promptItems = response.data;
+								scope.promptItems = response.data;
 							}
 							show();
 						});

@@ -91,8 +91,6 @@ a.link-white:active {
 	padding: 4px 10px;
 }
 
-.prompt-item:hover,
-.prompt-item:focus,
-.prompt-item:active{
+.prompt-item.active{
 	background-color: #eee;
 }
