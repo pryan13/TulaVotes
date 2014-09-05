@@ -50,7 +50,7 @@ module.exports = function(config) {
 		var query = formDbObject.find(qParam);
 		if(data.getNotExpiredOnly)
 			query = nonExpired(query);
-		query.populate('createdBy', 'name').exec(function (err, forms) {
+		query.select('-formOptions.votes').populate('createdBy', 'name').populate('tags', 'name').exec(function (err, forms) {
 			var response = [];
 			var currentDate = new Date();
 			for(var i = 0; i < forms.length; i++){
