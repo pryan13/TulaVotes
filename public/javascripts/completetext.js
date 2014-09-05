@@ -40,7 +40,6 @@ angular.module('tulaVotes.completetext', [])
 				};
 				var hide = function(){
 					prompt.css('display', 'none');
-					//scope.activeItem = -1;
 				};
 				var keyAction = function(code){
 					$timeout(function () {
@@ -77,6 +76,7 @@ angular.module('tulaVotes.completetext', [])
 					hide();
 					$timeout(function () {
 						scope.promptItems = [];
+						scope.activeItem = -1;
 					}, 10);
 				};
 				element.on("blur", clearPrompt);
