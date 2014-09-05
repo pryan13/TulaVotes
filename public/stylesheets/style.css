@@ -54,10 +54,25 @@ a.link-white:active {
 	margin-left: 20px;
 }
 
+.right-margin-4{
+	margin-right: 4px;
+}
+
 .remove-item{
 	position: absolute;
 	right: 2px;
 	top: -8px;
+}
+
+.tag{
+	margin-left: 2px;
+	margin-right: 9px;
+	position: relative;
+}
+
+.tag .close{
+	position: absolute;
+	top: -3px;
 }
 
 .prompt{

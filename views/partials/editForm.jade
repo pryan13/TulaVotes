@@ -9,7 +9,9 @@
 		.form-group
 			label Tags
 			div(style="margin-bottom: 5px;")
-				span.badge(ng-repeat="tag in formData.tags") {{tag.name}}
+				span.badge.right-margin-4(ng-repeat="tag in formData.tags") {{tag.name}}
+					span.tag
+						a.close(href="javascript:void(0)", data-dismiss="alert") &times;
 			input.form-control(type="text",id="tagSelector",completetext="",items="formData.tags")
 		.form-group
 			label(for="type") Type
