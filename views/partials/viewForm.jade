@@ -4,6 +4,11 @@
 			i {{formData.createdBy}}
 			| &nbsp;create at&nbsp;
 			i {{formData.createdAt | date: 'H:mm:ss MM/dd/yyyy'}}
+	.row(ng-if="!!formData.tags && formData.tags.length > 0")
+		.col-sm-12.text-left
+			i.right-margin-4 tags:
+			span(ng-repeat="tag in formData.tags")
+				b {{!$first ? '/' + tag.name : tag.name}}
 	.row
 		.col-sm-12.text-left
 			h3 {{formData.name}}
