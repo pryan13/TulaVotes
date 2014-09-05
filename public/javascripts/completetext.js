@@ -28,7 +28,7 @@ angular.module('tulaVotes.completetext', [])
 						scope.items.push(tag);
 				};
 
-				var resultSelect = $compile(promptSelect)(scope);;
+				var resultSelect = $compile(promptSelect)(scope);
 
 				$timeout(function () {
 					element.after(resultSelect);
