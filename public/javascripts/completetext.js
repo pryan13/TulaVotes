@@ -7,7 +7,7 @@ angular.module('tulaVotes.completetext', [])
 			},
 			link: function(scope, element, attr, ctrl){
 				var promptSelect = '<div style="position: relative;">' +
-										'<ul class="prompt" id="' + element.attr('id') + '_promptSelect" >' +
+										'<ul style="display: none;" class="prompt" id="' + element.attr('id') + '_promptSelect" >' +
 											'<li class="prompt-item" ng-click="clickItem(item)" ng-repeat="item in promptItems" data-id="{{item._id}}">{{item.name}}</li>' +
 										'</ul>' +
 									'</div>';
@@ -22,15 +22,24 @@ angular.module('tulaVotes.completetext', [])
 					}
 					scope.promptItems = [];
 					element.val('');
+					hide();
 					if(!isTagFound)
 						scope.items.push(tag);
 				};
 
-				var resultSelect = $compile(promptSelect)(scope);
-				var select = resultSelect.children();
+				var resultSelect = $compile(promptSelect)(scope);;
+
 				$timeout(function () {
 					element.after(resultSelect);
 				}, 300);
+
+				var prompt = resultSelect.children();
+				var show = function(){
+					prompt.css('display', 'block');
+				};
+				var hide = function(){
+					prompt.css('display', 'none');
+				};
 
 				element.on("keyup", function(){
 					var tag = this.value;
@@ -49,6 +58,7 @@ angular.module('tulaVotes.completetext', [])
 							} else {
 								sc.promptItems = response.data;
 							}
+							show();
 						});
 				});
 			}
