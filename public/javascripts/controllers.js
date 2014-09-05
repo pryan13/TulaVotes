@@ -143,7 +143,6 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 	.controller('editFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',
 		function($scope, $routeParams, $http, $location, NotifyService, NOTIFICATION_TYPES){
 			$scope.isNew = $routeParams.formId === undefined;
-			//$scope.formOptions = [];
 			if($scope.isNew){
 				$scope.formData = {formOptions: [], type: 'radio', tags: []};
 				$scope.formData.formOptions.push({text: ""});
@@ -167,6 +166,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 
 			$scope.deleteOption = function(optNum){
 				$scope.formData.formOptions.splice(optNum, 1);
+			};
+
+			$scope.deleteTag = function(tagNum){
+				$scope.formData.tags.splice(tagNum,1);
 			};
 
 			var createForm = function (newForm) {
