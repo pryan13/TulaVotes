@@ -13,10 +13,17 @@ angular.module('tulaVotes.completetext', [])
 									'</div>';
 				scope.promptItems =[];
 
-				scope.clickItem = function(ttag){
-					scope.items.push(ttag);
+				scope.clickItem = function(tag){
+					var isTagFound = false;
+					for(var i = 0; i < scope.items.length; i++){
+						isTagFound = !!tag._id && scope.items[i]._id == tag._id || scope.items[i].name == tag.name;
+						if(isTagFound)
+							break;
+					}
 					scope.promptItems = [];
 					element.val('');
+					if(!isTagFound)
+						scope.items.push(tag);
 				};
 
 				var resultSelect = $compile(promptSelect)(scope);
