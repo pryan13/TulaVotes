@@ -7,6 +7,10 @@
 				span.input-group-btn
 					button.btn.btn-default(type='button',ng-class='{true: "active"}[showMine]',ng-click='toggleMine()') Show mine
 				input(type='text',placeholder="Type to filter forms",ng-model="searchQuery").form-control.text-center
+	.row.row-between-20(ng-if="tagsCloud && tagsCloud.length > 0")
+	.row
+		.col-sm-12.text-center
+			span.right-margin-4(ng-repeat="tag in tagsCloud") {{tag.name}}
 	.row.row-between-20
 	.row
 		.col-sm-12

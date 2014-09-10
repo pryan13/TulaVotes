@@ -204,8 +204,11 @@ module.exports = function(config) {
 		activity.save();
 	};
 
-	var getTagList = function(query, onComplete){
-		tagDbObject.find({name: new RegExp(query, 'i')}).exec(function(err, tagList){
+	var getTagList = function(searchQuery, onComplete){
+		var query = searchQuery
+			? tagDbObject.find({name: new RegExp(searchQuery, 'i')})
+			: tagDbObject.find();
+		query.exec(function(err, tagList){
 			var result = [];
 			for(var i = 0; i < tagList.length; i++){
 				result.push(tagList[i].toJSON());

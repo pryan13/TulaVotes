@@ -3,6 +3,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 		function ($scope, $http, $location, $window) {
 			$scope.showMine = false;
 			$scope.formData = {};
+			$scope.tagsCloud = [];
 
 			var refreshFormsList = function() {
 				var listUrl = $scope.showMine
@@ -14,6 +15,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
+					});
+				$http.get('/api/tags')
+					.success(function(response){
+						$scope.tagsCloud = response.data;
 					});
 			};
 

@@ -94,7 +94,7 @@ angular.module('tulaVotes.completetext', [])
 						clearPrompt();
 						return;
 					}
-					$http.get('/api/tags/' + tag)
+					$http.get('/api/tags/filter/' + tag)
 						.success(function(response){
 							if(response.data.length == 0){
 								//new tag
