@@ -106,7 +106,7 @@ module.exports = function(dal) {
 	});
 
 	router.get('/tags', auth, function(req, res){
-		dal.getTagList(null, function(err, tagList){
+		dal.getTagCloud(function(err, tagList){
 			onRequestComplete(res, err, tagList);
 		});
 	});

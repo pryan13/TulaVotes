@@ -157,20 +157,115 @@ module.exports = function(config) {
 	var saveFormTags = function(tags, onComplete){
 		async.map(tags, function(tag, callback){
 			if(!tag._id) {
-				new tagDbObject({name: tag.name})
+				new tagDbObject({name: tag.name, count: 1})
 					.save(function (err, savedTag) {
 						callback(err, savedTag._id);
 					});
 			}
 			else{
-				callback(null, tag._id);
+				tagDbObject.findById(tag._id, function(err, foundTag){
+					//foundTag.count += 1;
+					foundTag.save(function (err, savedTag) {
+						callback(err, savedTag._id);
+					});
+				});
 			}
 		}, function(err, results){
 			onComplete(err, results);
 		});
 	};
 
+	var attachTag = function(tag, callback){
+		if(!tag._id) {
+			new tagDbObject({name: tag.name, count: 1})
+				.save(function (err, savedTag) {
+					callback(err, savedTag._id);
+				});
+		}
+		else{
+			tagDbObject.findById(tag._id, function(err, foundTag){
+				foundTag.count += 1;
+				foundTag.save(function (err, savedTag) {
+					callback(err, savedTag._id);
+				});
+			});
+		}
+	};
+
+	var detachTag = function(tag, callback){
+		tagDbObject.findById(tag._id, function(err, foundTag){
+			foundTag.count -= 1;
+			foundTag.save(function (err, savedTag) {
+				callback(err, null);
+			});
+		});
+	};
+
 	var updateForm = function (data, onComplete) {
+		async.waterfall([
+			function(callback){
+				formDbObject.findById(data._id, function (err, form) {
+					callback(err, form, data);
+				});
+			},
+			function(form, inputData, callback){
+				var ttp = [];
+				var tagIdsToSkip = [];
+				var newTags = inputData.tags;
+				for(var i = 0; i < newTags.length; i++){
+					//attach new tag
+					if(!newTags[i]._id || form.tags.indexOf(newTags[i]._id) < 0){
+						newTags[i].action = 'attach';
+					}
+					else{
+						newTags[i].action = 'skip';
+						tagIdsToSkip.push(newTags[i]._id);
+					}
+					ttp.push(newTags[i])
+				}
+				for(var i = 0; i < form.tags.length; i++){
+					if(tagIdsToSkip.indexOf(form.tags[i]) >= 0)
+						continue;
+					ttp.push({_id: form.tags[i], action: 'detach'});
+				}
+				async.map(ttp, function(tag, callback) {
+					if (tag.action == 'attach') {
+						if (!tag._id) {
+							new tagDbObject({name: tag.name, count: 1})
+								.save(function (err, savedTag) {
+									callback(err, savedTag._id);
+								});
+						}
+						else {
+							tagDbObject.findById(tag._id, function (err, foundTag) {
+								foundTag.count += 1;
+								foundTag.save(function (err, savedTag) {
+									callback(err, savedTag._id);
+								});
+							});
+						}
+					}
+				}, function(err, results){
+					callback(err, form, inputData, results);
+				});
+			},
+			function(form, inputData, tagIds, callback){
+				form.name = inputData.name;
+				form.description = inputData.description;
+				form.type = inputData.type;
+				form.isActive = inputData.isActive;
+				form.expireAt = inputData.expireAt;
+				form.formOptions = inputData.formOptions;
+				form.addOptionOnVote = inputData.addOptionOnVote;
+				form.tags = tagIds;
+				form.save(function (err, form) {
+					callback(err, form._id);
+				});
+			}
+		], function(err, formId){
+			getForm(formId, onComplete);
+		});
+
 		saveFormTags(data.tags, function (err, tagIds) {
 			formDbObject.findById(data._id, function (err, form) {
 				form.name = data.name;
@@ -204,11 +299,35 @@ module.exports = function(config) {
 		activity.save();
 	};
 
-	var getTagList = function(searchQuery, onComplete){
-		var query = searchQuery
-			? tagDbObject.find({name: new RegExp(searchQuery, 'i')})
-			: tagDbObject.find();
-		query.exec(function(err, tagList){
+	var getTagCloud = function(onComplete){
+		async.waterfall([
+			function(callback){
+				formDbObject.count({}, function(err, count) {
+					callback(err, count);
+				});
+			},
+			function(formsCount, callback){
+				tagDbObject.find(function (err, tags) {
+					var result = [];
+					for (var i = 0; i < tags.length; i++) {
+						if(tags[i].count == 0)
+							continue;
+						result.push({
+							_id: tags[i]._id,
+							name: tags[i].name,
+							grade: ~~((tags[i].count / formsCount) / (1/6))
+						});
+					}
+					callback(err, result);
+				});
+			}
+		], function(err, result){
+			onComplete(err, result);
+		});
+	};
+
+	var getTagList = function(query, onComplete){
+		tagDbObject.find({name: new RegExp(query, 'i')}).exec(function(err, tagList){
 			var result = [];
 			for(var i = 0; i < tagList.length; i++){
 				result.push(tagList[i].toJSON());
@@ -229,6 +348,7 @@ module.exports = function(config) {
 		updateForm: updateForm,
 		deleteForm: deleteForm,
 		trackActivity: trackActivity,
-		getTagList: getTagList
+		getTagList: getTagList,
+		getTagCloud: getTagCloud
 	}
 };
