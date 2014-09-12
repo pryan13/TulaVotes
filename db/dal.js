@@ -179,14 +179,14 @@ module.exports = function(config) {
 		if(!tag._id) {
 			new tagDbObject({name: tag.name, count: 1})
 				.save(function (err, savedTag) {
-					callback(err, savedTag._id);
+					callback(err, savedTag._id.toString());
 				});
 		}
 		else{
 			tagDbObject.findById(tag._id, function(err, foundTag){
 				foundTag.count += 1;
 				foundTag.save(function (err, savedTag) {
-					callback(err, savedTag._id);
+					callback(err, savedTag._id.toString());
 				});
 			});
 		}
@@ -212,41 +212,43 @@ module.exports = function(config) {
 				var ttp = [];
 				var tagIdsToSkip = [];
 				var newTags = inputData.tags;
+				var existingTags = form.tags.map(function(tagId){return tagId.toString()});
 				for(var i = 0; i < newTags.length; i++){
 					//attach new tag
-					if(!newTags[i]._id || form.tags.indexOf(newTags[i]._id) < 0){
+					if(!newTags[i]._id || existingTags.indexOf(newTags[i]._id) < 0){
 						newTags[i].action = 'attach';
 					}
 					else{
+						//existing tag so remain it
 						newTags[i].action = 'skip';
 						tagIdsToSkip.push(newTags[i]._id);
 					}
 					ttp.push(newTags[i])
 				}
-				for(var i = 0; i < form.tags.length; i++){
-					if(tagIdsToSkip.indexOf(form.tags[i]) >= 0)
+				for(var i = 0; i < existingTags.length; i++){
+					if(tagIdsToSkip.indexOf(existingTags[i]) >= 0)
 						continue;
-					ttp.push({_id: form.tags[i], action: 'detach'});
+					//detach unused tag
+					ttp.push({_id: existingTags[i], action: 'detach'});
 				}
-				async.map(ttp, function(tag, callback) {
+				async.map(ttp, function(tag, mapCallback) {
 					if (tag.action == 'attach') {
-						if (!tag._id) {
-							new tagDbObject({name: tag.name, count: 1})
-								.save(function (err, savedTag) {
-									callback(err, savedTag._id);
-								});
-						}
-						else {
-							tagDbObject.findById(tag._id, function (err, foundTag) {
-								foundTag.count += 1;
-								foundTag.save(function (err, savedTag) {
-									callback(err, savedTag._id);
-								});
-							});
-						}
+						attachTag(tag, mapCallback);
+					}
+					if (tag.action == 'detach') {
+						detachTag(tag, mapCallback);
+					}
+					if(tag.action == 'skip'){
+						mapCallback(null, tag._id);
 					}
 				}, function(err, results){
-					callback(err, form, inputData, results);
+					var actualTagIds = [];
+					for(var i = 0; i < results.length; i++){
+						if(results[i] == null)
+							continue;
+						actualTagIds.push(results[i]);
+					}
+					callback(err, form, inputData, actualTagIds);
 				});
 			},
 			function(form, inputData, tagIds, callback){
@@ -266,21 +268,21 @@ module.exports = function(config) {
 			getForm(formId, onComplete);
 		});
 
-		saveFormTags(data.tags, function (err, tagIds) {
-			formDbObject.findById(data._id, function (err, form) {
-				form.name = data.name;
-				form.description = data.description;
-				form.type = data.type;
-				form.isActive = data.isActive;
-				form.expireAt = data.expireAt;
-				form.formOptions = data.formOptions;
-				form.addOptionOnVote = data.addOptionOnVote;
-				form.tags = tagIds;
-				form.save(function (err, form) {
-					getForm(form._id, onComplete);
-				});
-			});
-		});
+//		saveFormTags(data.tags, function (err, tagIds) {
+//			formDbObject.findById(data._id, function (err, form) {
+//				form.name = data.name;
+//				form.description = data.description;
+//				form.type = data.type;
+//				form.isActive = data.isActive;
+//				form.expireAt = data.expireAt;
+//				form.formOptions = data.formOptions;
+//				form.addOptionOnVote = data.addOptionOnVote;
+//				form.tags = tagIds;
+//				form.save(function (err, form) {
+//					getForm(form._id, onComplete);
+//				});
+//			});
+//		});
 	};
 
 	var deleteForm = function (id, onComplete) {
@@ -312,10 +314,13 @@ module.exports = function(config) {
 					for (var i = 0; i < tags.length; i++) {
 						if(tags[i].count == 0)
 							continue;
+						var grade = ~~((tags[i].count / formsCount) / (1/6));
+						if(grade < 1)
+							grade = 1;
 						result.push({
 							_id: tags[i]._id,
 							name: tags[i].name,
-							grade: ~~((tags[i].count / formsCount) / (1/6))
+							grade: grade
 						});
 					}
 					callback(err, result);
