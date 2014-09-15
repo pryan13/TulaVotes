@@ -46,7 +46,7 @@ module.exports = function(config) {
 
 	var tagSchema = new mongoose.Schema({
 		name: {type: String, trim: true, required: 'Tag name is required!'},
-		count: {type: Number, default: 0}
+		count: {type: Number, default: 0, min: [0, 'The value of Count field ({VALUE}) is less than {MIN}']}
 	},{
 		versionKey: false
 	});

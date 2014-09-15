@@ -16,7 +16,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 					.error(function (response) {
 						console.log('Error: ' + response);
 					});
-				$http.get('/api/tags')
+				var tagsUrl = $scope.showMine
+					? '/api/tags/mine'
+					: '/api/tags';
+				$http.get(tagsUrl)
 					.success(function(response){
 						$scope.tagsCloud = response.data;
 					});

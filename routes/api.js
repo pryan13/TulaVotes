@@ -105,10 +105,21 @@ module.exports = function(dal) {
 		})
 	});
 
-	router.get('/tags', auth, function(req, res){
-		dal.getTagCloud(function(err, tagList){
+	router.get('/tags/mine', auth, function(req, res){
+		getTagCloud(req, res, 'mine');
+	});
+
+	var getTagCloud = function(req, res, owner){
+		var reqData = {
+			formOwner: owner === 'mine' ? req.session.user.id : undefined
+		};
+		dal.getTagCloud(reqData, function(err, tagList){
 			onRequestComplete(res, err, tagList);
 		});
+	};
+
+	router.get('/tags', auth, function(req, res){
+		getTagCloud(req, res);
 	});
 
 	router.get('/tags/filter/:query', auth, function(req, res){

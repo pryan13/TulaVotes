@@ -267,22 +267,6 @@ module.exports = function(config) {
 		], function(err, formId){
 			getForm(formId, onComplete);
 		});
-
-//		saveFormTags(data.tags, function (err, tagIds) {
-//			formDbObject.findById(data._id, function (err, form) {
-//				form.name = data.name;
-//				form.description = data.description;
-//				form.type = data.type;
-//				form.isActive = data.isActive;
-//				form.expireAt = data.expireAt;
-//				form.formOptions = data.formOptions;
-//				form.addOptionOnVote = data.addOptionOnVote;
-//				form.tags = tagIds;
-//				form.save(function (err, form) {
-//					getForm(form._id, onComplete);
-//				});
-//			});
-//		});
 	};
 
 	var deleteForm = function (id, onComplete) {
@@ -301,21 +285,30 @@ module.exports = function(config) {
 		activity.save();
 	};
 
-	var getTagCloud = function(onComplete){
+	var getTagCloud = function(data, onComplete){
 		async.waterfall([
 			function(callback){
-				formDbObject.count({}, function(err, count) {
-					callback(err, count);
+				var query = {};
+				if(data.formOwner){
+					query.createdBy = data.formOwner;
+				}
+				formDbObject.where(query).select('createdBy tags').exec(function(err, forms) {
+					callback(err, {forms: forms, byOwner: !!query.createdBy});
 				});
 			},
-			function(formsCount, callback){
-				tagDbObject.find(function (err, tags) {
+			function(formsData, callback){
+				var formsCount = formsData.length;
+				if(formsCount == 0) {
+					callback(null, []);
+					return;
+				}
+				var processTags = function(err, tags){
 					var result = [];
 					for (var i = 0; i < tags.length; i++) {
-						if(tags[i].count == 0)
+						if (tags[i].count == 0)
 							continue;
-						var grade = ~~((tags[i].count / formsCount) / (1/6));
-						if(grade < 1)
+						var grade = ~~((tags[i].count / formsCount) / (1 / 6));
+						if (grade < 1)
 							grade = 1;
 						result.push({
 							_id: tags[i]._id,
@@ -324,7 +317,24 @@ module.exports = function(config) {
 						});
 					}
 					callback(err, result);
-				});
+				};
+				var tagsInOwnersForms = [];
+				if(formsData.byOwner){
+					formsData.forms.forEach(function(item){
+						for(var j = 0; j < item.tags.length; j++){
+							var tagId = item.tags[j];
+							if(tagsInOwnersForms.indexOf(tagId) >= 0)
+								continue;
+							tagsInOwnersForms.push(tagId);
+						}
+					});
+					if(tagsInOwnersForms.length == 0)
+						callback(null, []);
+					tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
+				}
+				else {
+					tagDbObject.find(processTags);
+				}
 			}
 		], function(err, result){
 			onComplete(err, result);
