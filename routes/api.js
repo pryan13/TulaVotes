@@ -28,6 +28,9 @@ module.exports = function(dal) {
 				getNotExpiredOnly: !isMine, //get only not expired forms if not mine and all forms otherwise
 				formOwner: isMine ? req.session.user.id : owner
 			};
+		if(req.query.tags){
+			reqData.tags = req.query.tags.split(',');
+		}
 		dal.getList(reqData, function (err, forms) {
 			onRequestComplete(res, err, forms);
 		});
@@ -105,7 +108,24 @@ module.exports = function(dal) {
 		})
 	});
 
-	router.get('/tags/:query', auth, function(req, res){
+	router.get('/tags/mine', auth, function(req, res){
+		getTagCloud(req, res, 'mine');
+	});
+
+	var getTagCloud = function(req, res, owner){
+		var reqData = {
+			formOwner: owner === 'mine' ? req.session.user.id : undefined
+		};
+		dal.getTagCloud(reqData, function(err, tagList){
+			onRequestComplete(res, err, tagList);
+		});
+	};
+
+	router.get('/tags', auth, function(req, res){
+		getTagCloud(req, res);
+	});
+
+	router.get('/tags/filter/:query', auth, function(req, res){
 		dal.getTagList(req.params.query, function(err, tagList){
 			onRequestComplete(res, err, tagList);
 		});
