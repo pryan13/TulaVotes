@@ -197,7 +197,8 @@ module.exports = function(config) {
 
 	var detachTag = function(tag, callback){
 		tagDbObject.findById(tag._id, function(err, foundTag){
-			foundTag.count -= 1;
+			if(foundTag.count)
+				foundTag.count -= 1;
 			foundTag.save(function (err, savedTag) {
 				callback(err, null);
 			});
