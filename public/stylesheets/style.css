@@ -58,6 +58,10 @@ a.link-white:active {
 	margin-right: 4px;
 }
 
+.right-margin-10{
+	margin-right: 10px;
+}
+
 .remove-item{
 	position: absolute;
 	right: 2px;
@@ -73,6 +77,46 @@ a.link-white:active {
 .tag .close{
 	position: absolute;
 	top: -3px;
+}
+
+.tag-cloud-item{
+	padding: 3px 7px;
+	cursor: pointer;
+}
+
+.tag-cloud-item:hover,
+.tag-cloud-item-active{
+	background-color: #bbb;
+	border-radius: 10px;
+	color: #fff;
+	min-width: 10px;
+	text-align: center;
+	vertical-align: baseline;
+	white-space: nowrap;
+}
+
+.font-1{
+	font-size: 10px;
+}
+
+.font-2{
+	font-size: 14px;
+}
+
+.font-3{
+	font-size: 18px;
+}
+
+.font-4{
+	font-size: 22px;
+}
+
+.font-5{
+	font-size: 26px;
+}
+
+.font-6{
+	font-size: 30px;
 }
 
 .prompt{

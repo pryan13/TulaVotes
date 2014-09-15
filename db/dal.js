@@ -37,7 +37,7 @@ module.exports = function(config) {
 
 	var nonExpired = function(query){
 		var now = new Date();
-		query = query.where({$or: [{expireAt: {$gte: now}},  {expireAt: {$exists: false}}]});
+		query = query.where({$or: [{expireAt: {$gte: now}}, {expireAt: {$exists: false}}]});
 		return query;
 	};
 
@@ -50,6 +50,9 @@ module.exports = function(config) {
 		var query = formDbObject.find(qParam);
 		if(data.getNotExpiredOnly)
 			query = nonExpired(query);
+		if(data.tags){
+			query = query.where({tags: {$in: data.tags}});
+		}
 		query.select('-formOptions.votes').populate('createdBy', 'name').populate('tags', 'name').exec(function (err, forms) {
 			var response = [];
 			var currentDate = new Date();
@@ -157,34 +160,115 @@ module.exports = function(config) {
 	var saveFormTags = function(tags, onComplete){
 		async.map(tags, function(tag, callback){
 			if(!tag._id) {
-				new tagDbObject({name: tag.name})
+				new tagDbObject({name: tag.name, count: 1})
 					.save(function (err, savedTag) {
 						callback(err, savedTag._id);
 					});
 			}
 			else{
-				callback(null, tag._id);
+				tagDbObject.findById(tag._id, function(err, foundTag){
+					//foundTag.count += 1;
+					foundTag.save(function (err, savedTag) {
+						callback(err, savedTag._id);
+					});
+				});
 			}
 		}, function(err, results){
 			onComplete(err, results);
 		});
 	};
 
-	var updateForm = function (data, onComplete) {
-		saveFormTags(data.tags, function (err, tagIds) {
-			formDbObject.findById(data._id, function (err, form) {
-				form.name = data.name;
-				form.description = data.description;
-				form.type = data.type;
-				form.isActive = data.isActive;
-				form.expireAt = data.expireAt;
-				form.formOptions = data.formOptions;
-				form.addOptionOnVote = data.addOptionOnVote;
-				form.tags = tagIds;
-				form.save(function (err, form) {
-					getForm(form._id, onComplete);
+	var attachTag = function(tag, callback){
+		if(!tag._id) {
+			new tagDbObject({name: tag.name, count: 1})
+				.save(function (err, savedTag) {
+					callback(err, savedTag._id.toString());
+				});
+		}
+		else{
+			tagDbObject.findById(tag._id, function(err, foundTag){
+				foundTag.count += 1;
+				foundTag.save(function (err, savedTag) {
+					callback(err, savedTag._id.toString());
 				});
 			});
+		}
+	};
+
+	var detachTag = function(tag, callback){
+		tagDbObject.findById(tag._id, function(err, foundTag){
+			foundTag.count -= 1;
+			foundTag.save(function (err, savedTag) {
+				callback(err, null);
+			});
+		});
+	};
+
+	var updateForm = function (data, onComplete) {
+		async.waterfall([
+			function(callback){
+				formDbObject.findById(data._id, function (err, form) {
+					callback(err, form, data);
+				});
+			},
+			function(form, inputData, callback){
+				var ttp = [];
+				var tagIdsToSkip = [];
+				var newTags = inputData.tags;
+				var existingTags = form.tags.map(function(tagId){return tagId.toString()});
+				for(var i = 0; i < newTags.length; i++){
+					//attach new tag
+					if(!newTags[i]._id || existingTags.indexOf(newTags[i]._id) < 0){
+						newTags[i].action = 'attach';
+					}
+					else{
+						//existing tag so remain it
+						newTags[i].action = 'skip';
+						tagIdsToSkip.push(newTags[i]._id);
+					}
+					ttp.push(newTags[i])
+				}
+				for(var i = 0; i < existingTags.length; i++){
+					if(tagIdsToSkip.indexOf(existingTags[i]) >= 0)
+						continue;
+					//detach unused tag
+					ttp.push({_id: existingTags[i], action: 'detach'});
+				}
+				async.map(ttp, function(tag, mapCallback) {
+					if (tag.action == 'attach') {
+						attachTag(tag, mapCallback);
+					}
+					if (tag.action == 'detach') {
+						detachTag(tag, mapCallback);
+					}
+					if(tag.action == 'skip'){
+						mapCallback(null, tag._id);
+					}
+				}, function(err, results){
+					var actualTagIds = [];
+					for(var i = 0; i < results.length; i++){
+						if(results[i] == null)
+							continue;
+						actualTagIds.push(results[i]);
+					}
+					callback(err, form, inputData, actualTagIds);
+				});
+			},
+			function(form, inputData, tagIds, callback){
+				form.name = inputData.name;
+				form.description = inputData.description;
+				form.type = inputData.type;
+				form.isActive = inputData.isActive;
+				form.expireAt = inputData.expireAt;
+				form.formOptions = inputData.formOptions;
+				form.addOptionOnVote = inputData.addOptionOnVote;
+				form.tags = tagIds;
+				form.save(function (err, form) {
+					callback(err, form._id);
+				});
+			}
+		], function(err, formId){
+			getForm(formId, onComplete);
 		});
 	};
 
@@ -202,6 +286,62 @@ module.exports = function(config) {
 			act: data.activity
 		});
 		activity.save();
+	};
+
+	var getTagCloud = function(data, onComplete){
+		async.waterfall([
+			function(callback){
+				var query = {};
+				if(data.formOwner){
+					query.createdBy = data.formOwner;
+				}
+				formDbObject.where(query).select('createdBy tags').exec(function(err, forms) {
+					callback(err, {forms: forms, byOwner: !!query.createdBy});
+				});
+			},
+			function(formsData, callback){
+				var formsCount = formsData.forms.length;
+				if(formsCount == 0) {
+					callback(null, []);
+					return;
+				}
+				var processTags = function(err, tags){
+					var result = [];
+					for (var i = 0; i < tags.length; i++) {
+						if (tags[i].count == 0)
+							continue;
+						var grade = ~~((tags[i].count / formsCount) / (1 / 6));
+						if (grade < 1)
+							grade = 1;
+						result.push({
+							_id: tags[i]._id,
+							name: tags[i].name,
+							grade: grade
+						});
+					}
+					callback(err, result);
+				};
+				var tagsInOwnersForms = [];
+				if(formsData.byOwner){
+					formsData.forms.forEach(function(item){
+						for(var j = 0; j < item.tags.length; j++){
+							var tagId = item.tags[j];
+							if(tagsInOwnersForms.indexOf(tagId) >= 0)
+								continue;
+							tagsInOwnersForms.push(tagId);
+						}
+					});
+					if(tagsInOwnersForms.length == 0)
+						callback(null, []);
+					tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
+				}
+				else {
+					tagDbObject.find(processTags);
+				}
+			}
+		], function(err, result){
+			onComplete(err, result);
+		});
 	};
 
 	var getTagList = function(query, onComplete){
@@ -226,6 +366,7 @@ module.exports = function(config) {
 		updateForm: updateForm,
 		deleteForm: deleteForm,
 		trackActivity: trackActivity,
-		getTagList: getTagList
+		getTagList: getTagList,
+		getTagCloud: getTagCloud
 	}
 };
