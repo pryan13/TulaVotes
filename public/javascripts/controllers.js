@@ -5,23 +5,27 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.formData = {};
 			$scope.tagsCloud = [];
 
-			var refreshFormsList = function() {
+			var refreshForms = function(){
 				var listUrl = $scope.showMine
 					? '/api/forms/mine'
 					: '/api/forms';
-				$http.get(listUrl)
+				$http.get(listUrl + '?tags=' + $scope.tagsCloud.filter(function(item){ return !!item.isSelected;}).map(function(item){ return item._id;}).join(','))
 					.success(function (response) {
 						$scope.forms = response.data;
 					})
 					.error(function (response) {
 						console.log('Error: ' + response);
 					});
+			};
+
+			var refreshFormsList = function() {
 				var tagsUrl = $scope.showMine
 					? '/api/tags/mine'
 					: '/api/tags';
 				$http.get(tagsUrl)
 					.success(function(response){
 						$scope.tagsCloud = response.data;
+						refreshForms();
 					});
 			};
 
@@ -47,6 +51,11 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.goVote = function(formId){
 				$location.url('/view/' + formId);
 			}
+
+			$scope.tagSelected = function(tag){
+				tag.isSelected=!tag.isSelected;
+				refreshForms();
+			};
 		}
 	])
 	.controller('viewFormCtrl', ['$scope', '$routeParams', '$http', '$location', 'NotifyService', 'NOTIFICATION_TYPES',

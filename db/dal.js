@@ -37,7 +37,7 @@ module.exports = function(config) {
 
 	var nonExpired = function(query){
 		var now = new Date();
-		query = query.where({$or: [{expireAt: {$gte: now}},  {expireAt: {$exists: false}}]});
+		query = query.where({$or: [{expireAt: {$gte: now}}, {expireAt: {$exists: false}}]});
 		return query;
 	};
 
@@ -50,6 +50,9 @@ module.exports = function(config) {
 		var query = formDbObject.find(qParam);
 		if(data.getNotExpiredOnly)
 			query = nonExpired(query);
+		if(data.tags){
+			query = query.where({tags: {$in: data.tags}});
+		}
 		query.select('-formOptions.votes').populate('createdBy', 'name').populate('tags', 'name').exec(function (err, forms) {
 			var response = [];
 			var currentDate = new Date();

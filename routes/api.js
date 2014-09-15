@@ -28,6 +28,9 @@ module.exports = function(dal) {
 				getNotExpiredOnly: !isMine, //get only not expired forms if not mine and all forms otherwise
 				formOwner: isMine ? req.session.user.id : owner
 			};
+		if(req.query.tags){
+			reqData.tags = req.query.tags.split(',');
+		}
 		dal.getList(reqData, function (err, forms) {
 			onRequestComplete(res, err, forms);
 		});

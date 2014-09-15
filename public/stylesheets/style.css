@@ -84,7 +84,8 @@ a.link-white:active {
 	cursor: pointer;
 }
 
-.tag-cloud-item:hover {
+.tag-cloud-item:hover,
+.tag-cloud-item-active{
 	background-color: #bbb;
 	border-radius: 10px;
 	color: #fff;
