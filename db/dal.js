@@ -297,7 +297,7 @@ module.exports = function(config) {
 				});
 			},
 			function(formsData, callback){
-				var formsCount = formsData.length;
+				var formsCount = formsData.forms.length;
 				if(formsCount == 0) {
 					callback(null, []);
 					return;
