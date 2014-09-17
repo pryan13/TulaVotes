@@ -19,8 +19,10 @@ module.exports = {
 			"mchernyavsky@tula.co",
 			"skorotki@tula.co",
 			"pyermalovich@tula.co",
+			"vkuznecov@tula.co",
 			"vgamzunov@tula.co",
-			"ykozlova@tula.co"
+			"ykozlova@tula.co",
+			"vsemiachko@tula.co"
 		]
 	},
 	test: {
