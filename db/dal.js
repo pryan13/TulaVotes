@@ -295,6 +295,8 @@ module.exports = function(config) {
 				var query = {};
 				if(data.formOwner){
 					query.createdBy = data.formOwner;
+				} else {
+					query.isActive = true;
 				}
 				formDbObject.where(query).select('createdBy tags').exec(function(err, forms) {
 					callback(err, {forms: forms, byOwner: !!query.createdBy});
@@ -323,24 +325,19 @@ module.exports = function(config) {
 					callback(err, result);
 				};
 				var tagsInOwnersForms = [];
-				if(formsData.byOwner){
-					formsData.forms.forEach(function(item){
-						for(var j = 0; j < item.tags.length; j++){
-							var tagId = item.tags[j];
-							if(tagsInOwnersForms.indexOf(tagId) >= 0)
-								continue;
-							tagsInOwnersForms.push(tagId);
-						}
-					});
-					if(tagsInOwnersForms.length == 0) {
-						callback(null, []);
-						return;
+				formsData.forms.forEach(function(item){
+					for(var j = 0; j < item.tags.length; j++){
+						var tagId = item.tags[j];
+						if(tagsInOwnersForms.indexOf(tagId) >= 0)
+							continue;
+						tagsInOwnersForms.push(tagId);
 					}
-					tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
+				});
+				if(tagsInOwnersForms.length == 0) {
+					callback(null, []);
+					return;
 				}
-				else {
-					tagDbObject.find(processTags);
-				}
+				tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
 			}
 		], function(err, result){
 			onComplete(err, result);
