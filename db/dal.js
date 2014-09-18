@@ -332,8 +332,10 @@ module.exports = function(config) {
 							tagsInOwnersForms.push(tagId);
 						}
 					});
-					if(tagsInOwnersForms.length == 0)
+					if(tagsInOwnersForms.length == 0) {
 						callback(null, []);
+						return;
+					}
 					tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
 				}
 				else {
