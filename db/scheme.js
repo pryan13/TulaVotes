@@ -21,6 +21,7 @@ module.exports = function(config) {
 		type: {type: String, enum: ['radio', 'checkbox'], default: 'radio' },
 		isActive: {type: Boolean, default: false},
 		addOptionOnVote: {type: Boolean, default: false},
+		showVoters: {type: Boolean, default: false},
 		formOptions: {
 			type: [{
 				text: {type: String, trim: true, required: 'Option text is required!'},

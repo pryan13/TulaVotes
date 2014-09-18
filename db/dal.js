@@ -72,23 +72,27 @@ module.exports = function(config) {
 		});
 	};
 
-	var viewFormOptions = function (formOptions, requestedBy) {
+	var viewFormOptions = function (formOptions, requestedBy, showVoters) {
 		var hasAlreadyVotedOnForm = false,
 			viewFormOptions =[];
 		for (var i = 0; i < formOptions.length; i++) {
 			var hasAlreadyVoted = false;
 			for (var j = 0; j < formOptions[i].votes.length; j++) {
-				if (formOptions[i].votes[j].votedBy.toString() !== requestedBy)
+				if (formOptions[i].votes[j].votedBy._id.toString() !== requestedBy)
 					continue;
 				hasAlreadyVotedOnForm = hasAlreadyVoted = true;
 				break;
 			}
-			viewFormOptions.push({
+			var viewOption = {
 				_id: formOptions[i]._id,
 				text: formOptions[i].text,
 				checked: hasAlreadyVoted,
 				votesCount: formOptions[i].votes.length
-			});
+			};
+			if(showVoters){
+				viewOption.voters = formOptions[i].votes.map(function(vote){return vote.votedBy.name;});
+			}
+			viewFormOptions.push(viewOption);
 		}
 		return {
 			hasAlreadyVoted: hasAlreadyVotedOnForm,
@@ -97,7 +101,7 @@ module.exports = function(config) {
 	};
 
 	var getFormView = function (data, onComplete) {
-		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('tags', 'name').exec(function (err, form) {
+		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('tags', 'name').populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
 			var result = {
 				_id: form._id,
 				name: form.name,
@@ -108,7 +112,7 @@ module.exports = function(config) {
 				addOptionOnVote: form.addOptionOnVote,
 				tags: form.tags
 			};
-			var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
+			var resOptions = viewFormOptions(form.formOptions, data.requestedBy, form.showVoters);
 			result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
 			result.formOptions = resOptions.formOptions;
 			onComplete(err, result);
@@ -116,7 +120,7 @@ module.exports = function(config) {
 	};
 
 	var voteOnForm = function (data, onComplete) {
-		formDbObject.findById(data.voteData.formId, function (err, form) {
+		formDbObject.findById(data.voteData.formId).populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
 			for (var j = 0; j < form.formOptions.length; j++) {
 				for(var i = 0; i < data.voteData.selectedOptions.length; i++) {
 					if (form.formOptions[j]._id != data.voteData.selectedOptions[i])
@@ -132,49 +136,52 @@ module.exports = function(config) {
 				});
 			}
 			form.save(function (err, form) {
-				var resOptions = viewFormOptions(form.formOptions, data.requestedBy);
-				onComplete(err, resOptions.formOptions);
+				formDbObject.findById(form._id).populate('formOptions.votes.votedBy', 'name').exec(function (err, popForm) {
+					var resOptions = viewFormOptions(popForm.formOptions, data.requestedBy, popForm.showVoters);
+					onComplete(err, resOptions.formOptions);
+				});
 			});
 		});
 	};
 
 	var createForm = function (data, onComplete) {
-		saveFormTags(data.formData.tags, function (err, tagIds) {
-			var item = new formDbObject({
-				name: data.formData.name,
-				description: data.formData.description,
-				type: data.formData.type,
-				isActive: !!data.formData.isActive,
-				formOptions: data.formData.formOptions,
-				createdBy: data.requestedBy,
-				expireAt: data.formData.expireAt,
-				addOptionOnVote: data.formData.addOptionOnVote,
-				tags: tagIds
-			});
-			item.save(function (err, form) {
-				getForm(form._id, onComplete);
-			});
-		});
-	};
-
-	var saveFormTags = function(tags, onComplete){
-		async.map(tags, function(tag, callback){
-			if(!tag._id) {
-				new tagDbObject({name: tag.name, count: 1})
-					.save(function (err, savedTag) {
-						callback(err, savedTag._id);
-					});
-			}
-			else{
-				tagDbObject.findById(tag._id, function(err, foundTag){
-					//foundTag.count += 1;
-					foundTag.save(function (err, savedTag) {
-						callback(err, savedTag._id);
-					});
+		async.waterfall([
+			function(callback){
+				callback(null, data);
+			},
+			function(inputData, callback){
+				inputData.formData.tags.forEach(function(tag){
+					tag.action='attach';
+				});
+				async.map(inputData.formData.tags, attachTag, function(err, results){
+					var actualTagIds = [];
+					for(var i = 0; i < results.length; i++){
+						if(results[i] == null)
+							continue;
+						actualTagIds.push(results[i]);
+					}
+					callback(err, inputData, results);
+				});
+			},
+			function(inputData, tagIds, callback){
+				var item = new formDbObject({
+					name: inputData.formData.name,
+					description: inputData.formData.description,
+					type: inputData.formData.type,
+					isActive: !!inputData.formData.isActive,
+					showVoters: inputData.formData.showVoters,
+					formOptions: inputData.formData.formOptions,
+					createdBy: inputData.requestedBy,
+					expireAt: inputData.formData.expireAt,
+					addOptionOnVote: inputData.formData.addOptionOnVote,
+					tags: tagIds
+				});
+				item.save(function (err, savedForm) {
+					callback(err, savedForm._id);
 				});
 			}
-		}, function(err, results){
-			onComplete(err, results);
+		], function(err, formId){
+			getForm(formId, onComplete);
 		});
 	};
 
@@ -260,6 +267,7 @@ module.exports = function(config) {
 				form.description = inputData.description;
 				form.type = inputData.type;
 				form.isActive = inputData.isActive;
+				form.showVoters = inputData.showVoters;
 				form.expireAt = inputData.expireAt;
 				form.formOptions = inputData.formOptions;
 				form.addOptionOnVote = inputData.addOptionOnVote;
@@ -295,6 +303,8 @@ module.exports = function(config) {
 				var query = {};
 				if(data.formOwner){
 					query.createdBy = data.formOwner;
+				} else {
+					query.isActive = true;
 				}
 				formDbObject.where(query).select('createdBy tags').exec(function(err, forms) {
 					callback(err, {forms: forms, byOwner: !!query.createdBy});
@@ -323,22 +333,19 @@ module.exports = function(config) {
 					callback(err, result);
 				};
 				var tagsInOwnersForms = [];
-				if(formsData.byOwner){
-					formsData.forms.forEach(function(item){
-						for(var j = 0; j < item.tags.length; j++){
-							var tagId = item.tags[j];
-							if(tagsInOwnersForms.indexOf(tagId) >= 0)
-								continue;
-							tagsInOwnersForms.push(tagId);
-						}
-					});
-					if(tagsInOwnersForms.length == 0)
-						callback(null, []);
-					tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
+				formsData.forms.forEach(function(item){
+					for(var j = 0; j < item.tags.length; j++){
+						var tagId = item.tags[j];
+						if(tagsInOwnersForms.indexOf(tagId) >= 0)
+							continue;
+						tagsInOwnersForms.push(tagId);
+					}
+				});
+				if(tagsInOwnersForms.length == 0) {
+					callback(null, []);
+					return;
 				}
-				else {
-					tagDbObject.find(processTags);
-				}
+				tagDbObject.find({_id: {$in: tagsInOwnersForms}}, processTags);
 			}
 		], function(err, result){
 			onComplete(err, result);

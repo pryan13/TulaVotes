@@ -8,7 +8,7 @@ angular.module('tulaVotes.completetext', [])
 			link: function(scope, element, attr, ctrl){
 				var promptSelect = '<div style="position: relative;">' +
 										'<ul style="display: none;" class="prompt" ng-mouseover="overPrompt=true" ng-mouseleave="overPrompt=false">' +
-											'<li class="prompt-item" ng-class="{true:\'active\'}[$index==$parent.activeItem]" ng-mouseover="$parent.activeItem=$index" ng-click="clickItem(item)" ng-repeat="item in promptItems">{{item.name}}</li>' +
+											'<li class="prompt-item" ng-class="{true:\'active\'}[$index==$parent.activeItem]" ng-mouseover="$parent.activeItem=$index" ng-click="clickItem(item)" ng-repeat="item in promptItems">{{item.name}}<i ng-if="item.isNew">&nbsp;(new)</i></li>' +
 										'</ul>' +
 									'</div>';
 				scope.promptItems =[];
@@ -98,7 +98,7 @@ angular.module('tulaVotes.completetext', [])
 						.success(function(response){
 							if(response.data.length == 0){
 								//new tag
-								scope.promptItems = [{name: tag}];
+								scope.promptItems = [{name: tag, isNew: true}];
 							} else {
 								scope.promptItems = response.data;
 							}
