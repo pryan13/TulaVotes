@@ -50,6 +50,7 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
+			"master@tula.co",
 			"vdanilov@tula.co",
 			"aandrushkevich@tula.co",
 			"ashakh@tula.co",
@@ -57,7 +58,10 @@ module.exports = {
 			"mchernyavsky@tula.co",
 			"skorotki@tula.co",
 			"pyermalovich@tula.co",
-			"master@tula.co"
+			"vkuznecov@tula.co",
+			"vgamzunov@tula.co",
+			"ykozlova@tula.co",
+			"vsemiachko@tula.co"
 		]
 	}
 };
