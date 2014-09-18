@@ -139,42 +139,42 @@ module.exports = function(config) {
 	};
 
 	var createForm = function (data, onComplete) {
-		saveFormTags(data.formData.tags, function (err, tagIds) {
-			var item = new formDbObject({
-				name: data.formData.name,
-				description: data.formData.description,
-				type: data.formData.type,
-				isActive: !!data.formData.isActive,
-				formOptions: data.formData.formOptions,
-				createdBy: data.requestedBy,
-				expireAt: data.formData.expireAt,
-				addOptionOnVote: data.formData.addOptionOnVote,
-				tags: tagIds
-			});
-			item.save(function (err, form) {
-				getForm(form._id, onComplete);
-			});
-		});
-	};
-
-	var saveFormTags = function(tags, onComplete){
-		async.map(tags, function(tag, callback){
-			if(!tag._id) {
-				new tagDbObject({name: tag.name, count: 1})
-					.save(function (err, savedTag) {
-						callback(err, savedTag._id);
-					});
-			}
-			else{
-				tagDbObject.findById(tag._id, function(err, foundTag){
-					//foundTag.count += 1;
-					foundTag.save(function (err, savedTag) {
-						callback(err, savedTag._id);
-					});
+		async.waterfall([
+			function(callback){
+				callback(null, data);
+			},
+			function(inputData, callback){
+				inputData.formData.tags.forEach(function(tag){
+					tag.action='attach';
+				});
+				async.map(inputData.formData.tags, attachTag, function(err, results){
+					var actualTagIds = [];
+					for(var i = 0; i < results.length; i++){
+						if(results[i] == null)
+							continue;
+						actualTagIds.push(results[i]);
+					}
+					callback(err, inputData, results);
+				});
+			},
+			function(inputData, tagIds, callback){
+				var item = new formDbObject({
+					name: inputData.formData.name,
+					description: inputData.formData.description,
+					type: inputData.formData.type,
+					isActive: !!inputData.formData.isActive,
+					formOptions: inputData.formData.formOptions,
+					createdBy: inputData.requestedBy,
+					expireAt: inputData.formData.expireAt,
+					addOptionOnVote: inputData.formData.addOptionOnVote,
+					tags: tagIds
+				});
+				item.save(function (err, savedForm) {
+					callback(err, savedForm._id);
 				});
 			}
-		}, function(err, results){
-			onComplete(err, results);
+		], function(err, formId){
+			getForm(formId, onComplete);
 		});
 	};
 
