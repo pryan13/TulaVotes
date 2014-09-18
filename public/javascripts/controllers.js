@@ -95,7 +95,8 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 					]
 				};
 				angular.forEach(data, function (fOpt) {
-					$scope.chartData.series[0].data.push([fOpt.text, fOpt.votesCount]);
+					var text = fOpt.voters && fOpt.voters.length > 0 ? fOpt.text + '(' +fOpt.voters + ')' : fOpt.text;
+					$scope.chartData.series[0].data.push([text, fOpt.votesCount]);
 				});
 			};
 			$http.get('/api/forms/view/' + $routeParams.formId)
