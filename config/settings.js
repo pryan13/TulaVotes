@@ -11,7 +11,6 @@ module.exports = {
 			};
 		},
 		allowedUsers: [
-			"master@tula.co",
 			"aandrushkevich@tula.co",
 			"ashakh@tula.co",
 			"sseviaryn@tula.co",
@@ -40,14 +39,11 @@ module.exports = {
 	},
 	staging: {
 		db : function() {
-			var name = process.env.OPENSHIFT_APP_NAME;
-
 			return {
-				uri: process.env.OPENSHIFT_MONGODB_DB_URL + name
+				uri: "mongodb://tulavotes:tulavotespass@ds063779.mongolab.com:63779/tulavotes"
 			};
 		},
 		allowedUsers: [
-			"master@tula.co",
 			"aandrushkevich@tula.co",
 			"ashakh@tula.co",
 			"sseviaryn@tula.co",

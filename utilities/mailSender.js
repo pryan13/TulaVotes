@@ -6,11 +6,12 @@ module.exports = function() {
 	var email   = require("emailjs/email");
 
 	var server  = email.server.connect({
-		host:    "devsmtp.tula.tc",
-		user:    "mailuser",
-		password:"NlfPEQ1Gw63d"
-	});
+		user: 'tulavotes@gmail.com',
+		password: 'votesTula1',
+		host:    "smtp.gmail.com",
+		ssl:     true
 
+	});
 
 	var sendMail = function(mailOptions){
 		server.send(mailOptions, function(err, message) {
@@ -40,17 +41,16 @@ module.exports = function() {
 		};
 
 		return mailOptions;
-	}
-
+	};
 
 	var sendMailToSubscribers = function(vote, user) {
 		if(vote.isSendMail && vote.isActive && (vote.isSendMail !== vote.isSendMailOld || vote.isActive !== vote.isActiveOld)) {
 			var mailOptions = createNotificationMailOptions(vote, user);
 			sendMail(mailOptions);
 		}
-	}
+	};
 
 	return {
 		sendMailToSubscribers: sendMailToSubscribers
-	}
-}
+	};
+};
