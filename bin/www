@@ -4,6 +4,6 @@ var app = require('../app');
 
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 
-var server = app.listen(app.get('port'), process.env.OPENSHIFT_NODEJS_IP || 'localhost', function() {
+var server = app.listen(app.get('port'), 80 || 'localhost', function() {
   debug('Express server listening on port ' + server.address().port);
 });

@@ -122,6 +122,9 @@ module.exports = function(config) {
 	var voteOnForm = function (data, onComplete) {
 		formDbObject.findById(data.voteData.formId).populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
 			for (var j = 0; j < form.formOptions.length; j++) {
+				form.formOptions[j].votes = form.formOptions[j].votes.filter(function(vote) {
+					return vote.votedBy.id !== data.requestedBy;
+				});
 				for(var i = 0; i < data.voteData.selectedOptions.length; i++) {
 					if (form.formOptions[j]._id != data.voteData.selectedOptions[i])
 						continue;
@@ -207,7 +210,7 @@ module.exports = function(config) {
 		tagDbObject.findById(tag._id, function(err, foundTag){
 			if(foundTag.count)
 				foundTag.count -= 1;
-			foundTag.save(function (err, savedTag) {
+			foundTag.save(function (err) {
 				callback(err, null);
 			});
 		});
@@ -237,7 +240,7 @@ module.exports = function(config) {
 					}
 					ttp.push(newTags[i])
 				}
-				for(var i = 0; i < existingTags.length; i++){
+				for(i = 0; i < existingTags.length; i++){
 					if(tagIdsToSkip.indexOf(existingTags[i]) >= 0)
 						continue;
 					//detach unused tag

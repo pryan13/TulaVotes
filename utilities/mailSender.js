@@ -6,11 +6,12 @@ module.exports = function() {
 	var email   = require("emailjs/email");
 
 	var server  = email.server.connect({
-		host:    "devsmtp.tula.tc",
-		user:    "mailuser",
-		password:"NlfPEQ1Gw63d"
-	});
+		user: 'tulavotes@gmail.com',
+		password: 'votesTula1',
+		host:    "smtp.gmail.com",
+		ssl:     true
 
+	});
 
 	var sendMail = function(mailOptions){
 		server.send(mailOptions, function(err, message) {
@@ -21,16 +22,17 @@ module.exports = function() {
 	var createNotificationMailOptions = function(vote, user){
 		var recipients =  config.allowedUsers.toString();
 		var voteId = typeof(vote._id) === 'object' ? vote._id.toJSON() : vote._id;
+		var link = vote.host + '/#/view/'+ voteId;
  		var mailBody = '<b>'+ vote.name+' ✔</b><br/><br/>'
 			+ vote.description + '<br/><br/>Создал: '
 			+ user.name + '<br/><br/>Ссылка: '
-			+ vote.host + '/#/view/'+ voteId;
+			+ '<a href="' + link +'">' + link + "</a>";
 		if(vote.expireAt){
 			var expireDate = typeof(vote.expireAt) === 'object' ? vote.expireAt.toISOString() : vote.expireAt;
 			mailBody += '<br/><br/>Актуально до: ' + expireDate.replace(/T/, ' ').replace(/\..+/, '')
 		}
 		var mailOptions = {
-			from: 'tulavotes@devsmtp.tula.tc',
+			from: 'tulavotes@tula.tc',
 			to: recipients,
 			subject: 'Новое голосование на TulaVotes : '+ vote.name,
 			attachment:
@@ -40,17 +42,16 @@ module.exports = function() {
 		};
 
 		return mailOptions;
-	}
-
+	};
 
 	var sendMailToSubscribers = function(vote, user) {
 		if(vote.isSendMail && vote.isActive && (vote.isSendMail !== vote.isSendMailOld || vote.isActive !== vote.isActiveOld)) {
 			var mailOptions = createNotificationMailOptions(vote, user);
 			sendMail(mailOptions);
 		}
-	}
+	};
 
 	return {
 		sendMailToSubscribers: sendMailToSubscribers
-	}
-}
+	};
+};

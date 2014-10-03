@@ -29,7 +29,7 @@ module.exports.init = function(app){
 					req.session.user = {id: result._id, name: result.name};
 					dal.trackActivity({requestedBy: result._id, activity: 'User logged in'});
 				}
-				res.redirect('/');
+				res.redirect(req.body.url.replace("login",""));
 			});
 		}
 		else {

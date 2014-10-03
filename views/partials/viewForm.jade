@@ -19,8 +19,7 @@
 		.col-sm-12.text-justify
 			div(class="{{formData.type}}")
 				label {{option.text}}
-					input(ng-if="formData.hasAlreadyVoted",type='{{formData.type}}',name="formVotes",ng-checked="option.checked",ng-disabled="formData.hasAlreadyVoted",value="true")
-					span(ng-if="!formData.hasAlreadyVoted",ng-switch="formData.type")
+					span(ng-switch="formData.type")
 						input(
 							ng-switch-when="checkbox",
 							type='checkbox',
@@ -32,8 +31,9 @@
 							type='radio',
 							name="formVotes",
 							ng-model="checkedRadio.option",
+							ng-checked="option.checked",
 							value="{{option._id}}")
-	.form-group.row(ng-if="!formData.hasAlreadyVoted && formData.addOptionOnVote && showNewOptionText")
+	.form-group.row(ng-if="formData.addOptionOnVote && showNewOptionText")
 		.col-sm-12.text-left
 			textarea.form-control(ng-model="formData.newOptionText", placeholder="Enter your text here", rows="3")
 			a.close.remove-item(href="javascript:void(0)", ng-click="toggleOption(false)", data-dismiss="alert") &times;
@@ -43,6 +43,6 @@
 	.row
 		.col-sm-12.text-left
 			.btn-group
-				button(ng-if="!formData.hasAlreadyVoted && formData.addOptionOnVote && !showNewOptionText", class="btn btn-default", ng-click='toggleOption(true)') Add Option
-				button(ng-if="!formData.hasAlreadyVoted", class="btn btn-default", ng-click='vote(formData)') Vote
+				button(ng-if="formData.addOptionOnVote && !showNewOptionText", class="btn btn-default", ng-click='toggleOption(true)') Add Option
+				button(class="btn btn-default", ng-click='vote(formData)') Vote
 				button(class="btn btn-default", ng-click='goBack()') Back

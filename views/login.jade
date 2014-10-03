@@ -2,7 +2,6 @@ extends layout
 
 block titleContent
 	|Enter to vote please
-
 block bodyContent
 	.container
 		.jumbotron.text-center
@@ -12,5 +11,8 @@ block bodyContent
 				.col-sm-7.col-sm-offset-2.text-center
 					p
 						input(type='text',placeholder="Type your email to login",name="email",autofocus).form-control.input-lg.text-center
+						input(type='hidden',id="url",name="url")
 				.col-sm-1
 					button(type='submit').btn.btn-primary.btn-lg OK
+	script.
+		document.getElementById('url').value = document.URL

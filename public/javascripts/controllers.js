@@ -34,7 +34,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.deleteForm = function (id) {
 				if($window.confirm('Do you realy want delete this form?')) {
 					$http.delete('/api/forms/' + id)
-						.success(function (response) {
+						.success(function () {
 							refreshFormsList();
 						})
 						.error(function (response) {
@@ -50,7 +50,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 
 			$scope.goVote = function(formId){
 				$location.url('/view/' + formId);
-			}
+			};
 
 			$scope.tagSelected = function(tag){
 				tag.isSelected=!tag.isSelected;
@@ -123,7 +123,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 				var isAnyChecked = false;
 				if($scope.formData.type !== 'radio' || !$scope.showNewOptionText) {
 					angular.forEach(data.formOptions, function (item) {
-						var itemChecked = item.checked || item._id === $scope.checkedRadio.option; //check both checkbox and radio cases
+						var itemChecked = item._id === $scope.checkedRadio.option || ($scope.formData.type !== 'radio' && item.checked ); //check both checkbox and radio cases
 						if (itemChecked)
 							voteData.selectedOptions.push(item._id);
 						isAnyChecked = isAnyChecked || itemChecked;
@@ -239,7 +239,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 
 			$scope.goBack = function(){
 				$location.url('/index');
-			}
+			};
 
 			$scope.updateHiddenValues = function(){
 				$scope.formData.isSendMailOld = $scope.formData.isSendMail;
