@@ -27,6 +27,9 @@
 		.checkbox
 			label Show Voter's Name
 				input(type="checkbox", ng-model='formData.showVoters')
+		.checkbox
+			label Notify users about voting creation by email
+				input(type="checkbox", ng-model='formData.isSendMail')
 		.form-group
 			label Expired At
 			input.form-control(type="text",placeholder="MM/dd/yyyy H:mm:ss", ng-model='formData.expireAt', formatinput="", format="MM/dd/yyyy H:mm:ss")

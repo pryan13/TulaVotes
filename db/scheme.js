@@ -20,6 +20,7 @@ module.exports = function(config) {
 		tags: {type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}]},
 		type: {type: String, enum: ['radio', 'checkbox'], default: 'radio' },
 		isActive: {type: Boolean, default: false},
+		isSendMail: {type: Boolean, default: false},
 		addOptionOnVote: {type: Boolean, default: false},
 		showVoters: {type: Boolean, default: false},
 		formOptions: {

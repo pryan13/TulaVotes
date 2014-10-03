@@ -1,5 +1,6 @@
 module.exports = function(dal) {
 	var router = require('express').Router();
+    var mailSender = require("../utilities/mailSender")();
 
 	var buildResponse = function(res, status, error){
 		res.statusCode = status;
@@ -90,14 +91,20 @@ module.exports = function(dal) {
 //create form
 	router.post('/forms', auth, function (req, res) {
 		dal.createForm({formData: req.body, requestedBy: req.session.user.id}, function (err, form) {
+			var vote = form;
+			vote.host = req.headers.origin;
 			onRequestComplete(res, err, form);
-		})
+			mailSender.sendMailToSubscribers(vote,req.session.user);
+		});
 	});
 
 //update form
 	router.put('/forms', auth, function (req, res) {
 		dal.updateForm(req.body, function (err, form) {
+			var vote = req.body;
+			vote.host = req.headers.origin;
 			onRequestComplete(res, err, form);
+			mailSender.sendMailToSubscribers(req.body,req.session.user);
 		});
 	});
 

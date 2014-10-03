@@ -164,12 +164,14 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			if($scope.isNew){
 				$scope.formData = {formOptions: [], type: 'radio', tags: []};
 				$scope.formData.formOptions.push({text: ""});
+                $scope.formData.isSendMail = true;
 			}
 			
 			if (!$scope.isNew){
 				$http.get('/api/forms/edit/' + $routeParams.formId)
 				.success(function (response) {
 					$scope.formData = response.data;
+					$scope.updateHiddenValues();
 					if($scope.formData.formOptions.length == 0)
 						$scope.formData.formOptions.push({text: ""});
 				})
@@ -196,6 +198,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 						if (response.success) {
 							$scope.formData = response.data;
 							$scope.isNew = false;
+							$scope.updateHiddenValues();
 							NotifyService.notify({type: NOTIFICATION_TYPES.success});
 						}
 						else {
@@ -217,6 +220,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 					.success(function (response) {
 						if(response.success) {
 							$scope.formData = response.data;
+							$scope.updateHiddenValues();
 							NotifyService.notify({type: NOTIFICATION_TYPES.success});
 						}
 						else {
@@ -236,4 +240,10 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			$scope.goBack = function(){
 				$location.url('/index');
 			}
+
+			$scope.updateHiddenValues = function(){
+				$scope.formData.isSendMailOld = $scope.formData.isSendMail;
+				$scope.formData.isActiveOld = $scope.formData.isActive;
+			}
+
 		}]);

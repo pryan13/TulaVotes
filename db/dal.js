@@ -169,6 +169,7 @@ module.exports = function(config) {
 					description: inputData.formData.description,
 					type: inputData.formData.type,
 					isActive: !!inputData.formData.isActive,
+					isSendMail: !!inputData.formData.isSendMail,
 					showVoters: inputData.formData.showVoters,
 					formOptions: inputData.formData.formOptions,
 					createdBy: inputData.requestedBy,
@@ -267,6 +268,7 @@ module.exports = function(config) {
 				form.description = inputData.description;
 				form.type = inputData.type;
 				form.isActive = inputData.isActive;
+				form.isSendMail = !!inputData.isSendMail,
 				form.showVoters = inputData.showVoters;
 				form.expireAt = inputData.expireAt;
 				form.formOptions = inputData.formOptions;
