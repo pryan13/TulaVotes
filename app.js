@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var routes = require('./routes/init');
+var connectDomain = require('connect-domain');
 
 var app = express();
 
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(session({secret: 'secret'}));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(connectDomain());
 
 routes.init(app);
 
@@ -34,25 +36,29 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
+//if (app.get('env') === 'development') {
+//    app.use(function(err, req, res, next) {
+//        res.status(err.status || 500);
+//        res.render('error', {
+//            message: err.message,
+//            error: err
+//        });
+//    });
+//}
+//app.use(function(err, req, res, next) {
+//    res.status(err.status || 500);
+//    res.render('error', {
+//        message: err.message,
+//        error: {}
+//    });
+//});
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+
+app.use(function(err, req, res,next) {
+	console.log(err.stack);
+	res.statusCode = 500;
+	res.send({error: err.stack});
+	next();
 });
-
 
 module.exports = app;

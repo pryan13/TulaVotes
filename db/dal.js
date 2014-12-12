@@ -37,7 +37,7 @@ module.exports = function(config) {
 
 	var nonExpired = function(query){
 		var now = new Date();
-		query = query.where({$or: [{expireAt: {$gte: now}}, {expireAt: {$exists: false}}]});
+		query = query.where({$or: [{expireAt: {$gte: now}}, {expireAt: {$exists: false}},  {expireAt: null}]});
 		return query;
 	};
 
@@ -102,19 +102,22 @@ module.exports = function(config) {
 
 	var getFormView = function (data, onComplete) {
 		formDbObject.findOne({_id: data.formId}).populate('createdBy', 'name').populate('tags', 'name').populate('formOptions.votes.votedBy', 'name').exec(function (err, form) {
-			var result = {
-				_id: form._id,
-				name: form.name,
-				description: form.description,
-				createdBy: form.createdBy.name,
-				createdAt: form.createdAt,
-				type: form.type,
-				addOptionOnVote: form.addOptionOnVote,
-				tags: form.tags
-			};
-			var resOptions = viewFormOptions(form.formOptions, data.requestedBy, form.showVoters);
-			result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
-			result.formOptions = resOptions.formOptions;
+			var result;
+			if(form) {
+				result = {
+					_id: form._id,
+					name: form.name,
+					description: form.description,
+					createdBy: form.createdBy.name,
+					createdAt: form.createdAt,
+					type: form.type,
+					addOptionOnVote: form.addOptionOnVote,
+					tags: form.tags
+				};
+				var resOptions = viewFormOptions(form.formOptions, data.requestedBy, form.showVoters);
+				result.hasAlreadyVoted = resOptions.hasAlreadyVoted;
+				result.formOptions = resOptions.formOptions;
+			}
 			onComplete(err, result);
 		});
 	};
@@ -271,7 +274,7 @@ module.exports = function(config) {
 				form.description = inputData.description;
 				form.type = inputData.type;
 				form.isActive = inputData.isActive;
-				form.isSendMail = !!inputData.isSendMail,
+				form.isSendMail = !!inputData.isSendMail;
 				form.showVoters = inputData.showVoters;
 				form.expireAt = inputData.expireAt;
 				form.formOptions = inputData.formOptions;

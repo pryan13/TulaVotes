@@ -234,6 +234,7 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 			};
 
 			$scope.duplicateForm = function (existingForm) {
+				existingForm.isActive = false;
 				createForm(existingForm);
 			};
 

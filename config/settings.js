@@ -1,13 +1,8 @@
 module.exports = {
 	development: {
-		db: function() {
-			var name = "tulaVotes",
-				host = "localhost";
-
+		db : function() {
 			return {
-				name: name,
-				host: host,
-				uri: "mongodb://" + host + "/" + name
+				uri: "mongodb://tulavotes:tulavotespass@ds063779.mongolab.com:63779/tulavotes"
 			};
 		},
 		allowedUsers: [
