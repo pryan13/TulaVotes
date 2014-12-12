@@ -84,9 +84,6 @@ angular.module('tulaVotesControllers', ['tulaVotes.notify', 'tulaVotes.constants
 							showInLegend: true
 						}
 					},
-					legend: {
-						layout: 'vertical'
-					},
 					series: [
 						{
 							type: 'pie',
